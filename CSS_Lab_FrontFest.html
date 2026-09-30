@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSS Lab — FrontFest: современный CSS с нуля (каскад, слои, flex, grid, container queries, :has, темы)</title>
+<style>
+  :root { --red: #663399; --red-dark: #231a33; --red-light: #f1eaf8; --red-mid: #d6c4ea; --ink: #1c1c1c; }
+  body { font-family: 'DejaVu Sans', 'Segoe UI', Arial, sans-serif; font-size: 14px; line-height: 1.6; color: var(--ink); }
+  h1 { font-size: 28px; color: var(--red); margin-bottom: 4px; }
+  .subtitle { font-size: 15px; color: #555; margin-top: 0; margin-bottom: 18px; }
+  h2 { font-size: 21px; color: var(--red-dark); border-bottom: 3px solid var(--red-mid); padding-bottom: 4px; margin-top: 44px; }
+  h3 { font-size: 16px; color: #333; margin-top: 24px; margin-bottom: 6px; }
+  h4 { font-size: 14px; color: #555; margin-top: 16px; margin-bottom: 4px; }
+  p { margin: 7px 0; }
+  code { background: #f3f0f6; padding: 1px 5px; border-radius: 3px; font-family: 'DejaVu Sans Mono', Menlo, Consolas, monospace; font-size: 12.5px; }
+  pre { background: #f8f6fa; border: 1px solid #dccfe9; border-left: 4px solid var(--red); border-radius: 4px; padding: 10px 12px; font-family: 'DejaVu Sans Mono', Menlo, Consolas, monospace; font-size: 12px; line-height: 1.4; white-space: pre-wrap; word-wrap: break-word; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0 16px 0; font-size: 12.5px; }
+  th, td { border: 1px solid #ddd; padding: 6px 9px; text-align: left; vertical-align: top; }
+  th { background: var(--red-light); color: var(--red-dark); }
+  tr:nth-child(even) td { background: #fafafa; }
+  ul, ol { margin: 4px 0 10px 0; padding-left: 22px; }
+  li { margin: 3px 0; }
+  .tag { display: inline-block; color: #fff; font-size: 11px; font-weight: bold; padding: 1px 8px; border-radius: 3px; margin-bottom: 5px; }
+  .insight-box { background: var(--red-light); border: 1px solid var(--red-mid); border-left: 5px solid var(--red); border-radius: 4px; padding: 8px 14px; margin: 12px 0; }
+  .insight-box .tag { background: var(--red); }
+  .fix-box { background: #f1faf3; border: 1px solid #bfe4c7; border-left: 5px solid #2f9e4a; border-radius: 4px; padding: 8px 14px; margin: 6px 0 14px 0; }
+  .fix-box .tag { background: #2f9e4a; }
+  .note-box { background: #f4f4f6; border: 1px solid #d9d9e0; border-left: 5px solid #555a6e; border-radius: 4px; padding: 8px 14px; margin: 12px 0; }
+  .note-box .tag { background: #555a6e; }
+  .next-box { background: #fff8e6; border: 1px solid #f0dca0; border-left: 5px solid #e0a800; border-radius: 4px; padding: 8px 14px; margin: 14px 0 6px 0; font-size: 13px; }
+  .next-box .tag { background: #e0a800; color: #3a2a00; }
+  .next-box ul { margin: 4px 0 2px 0; }
+  details.deep { border: 1px dashed var(--red-mid); border-radius: 4px; margin: 12px 0; background: #fff; }
+  details.deep summary { cursor: pointer; padding: 8px 14px; font-weight: bold; color: var(--red-dark); background: #efe8f6; border-radius: 4px; list-style: none; }
+  details.deep summary::before { content: '▸ '; }
+  details.deep[open] summary::before { content: '▾ '; }
+  details.deep .deep-body { padding: 6px 16px 10px 16px; }
+  .toc { background: #f5f1f9; border: 1px solid #dccfe9; border-radius: 6px; padding: 14px 20px; margin: 16px 0 24px 0; }
+  .toc ol { padding-left: 18px; }
+  .small { font-size: 12px; color: #777; }
+  .fnref { color: var(--red); font-weight: bold; font-size: 0.75em; }
+  .glossary-item { margin: 0 0 10px 0; padding-left: 24px; text-indent: -24px; }
+  .glossary-item b { color: var(--red-dark); }
+  .step { margin: 22px 0 10px 0; }
+  .step-head { display: block; background: var(--red-dark); color: #fff; padding: 6px 12px; border-radius: 4px 4px 0 0; font-weight: bold; font-size: 14px; }
+  .step-head .num { display: inline-block; background: #fff; color: var(--red-dark); padding: 0 8px; border-radius: 3px; margin-right: 8px; font-size: 12.5px; }
+  .step-body { border: 1px solid var(--red-mid); border-top: none; border-radius: 0 0 4px 4px; padding: 10px 14px; }
+  .step-body pre { margin: 8px 0; }
+  .why { background: #fff8e6; border-left: 4px solid #e0a800; padding: 6px 12px; margin: 10px 0 4px 0; font-size: 13px; }
+  .why b { color: #8a6500; }
+  .file { font-family: 'DejaVu Sans Mono', Menlo, monospace; font-size: 12px; color: var(--red-dark); background: #fdecea; padding: 1px 6px; border-radius: 3px; }
+  .session-banner { background: linear-gradient(90deg, var(--red-dark), var(--red)); color: #fff; padding: 10px 16px; border-radius: 6px; margin: 28px 0 12px 0; font-size: 17px; font-weight: bold; }
+  .session-banner span { font-weight: normal; font-size: 12px; opacity: 0.9; margin-left: 10px; }
+  .page-break { display: none; }
+  .life { font-family: 'DejaVu Sans Mono', Menlo, monospace; font-size: 12px; }
+
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #fff; }
+  .layout { display: flex; align-items: flex-start; }
+  .sidebar { position: sticky; top: 0; height: 100vh; overflow-y: auto; width: 300px; flex: 0 0 300px; background: var(--red-dark); color: #fff; padding: 52px 12px 16px 12px; box-sizing: border-box; font-size: 12.5px; transition: margin-left .2s; }
+  body.nav-collapsed .sidebar { margin-left: -300px; }
+  .sidebar .nav-title { font-size: 16px; font-weight: bold; color: #fff; margin-bottom: 8px; }
+  .sidebar ul { list-style: none; padding-left: 0; margin: 0; }
+  .sidebar li { margin: 1px 0; }
+  .sidebar a { color: #fff; text-decoration: none; display: block; padding: 4px 8px; border-radius: 4px; }
+  .sidebar a:hover { background: #fff; color: var(--red-dark); }
+  .sidebar .nav-steps { padding-left: 8px; border-left: 2px solid rgba(255,255,255,.4); margin: 4px 0 6px 8px; }
+  .sidebar .nav-steps a { font-size: 11.5px; color: #c9d3e6; }
+  .sidebar .nav-steps a:hover { color: var(--red-dark); }
+  .sidebar .nav-session a { color: #fff; font-weight: bold; margin-top: 6px; background: rgba(255,255,255,.12); }
+  .sidebar a .mark { display: inline-block; width: 14px; color: #fff; font-weight: bold; }
+  .sidebar a.done { opacity: .75; }
+  .sidebar a.done .mark::before { content: '✓'; }
+  .sidebar .progress { margin: 6px 0 12px 0; }
+  .sidebar .bar { height: 8px; background: rgba(255,255,255,.25); border-radius: 4px; overflow: hidden; }
+  .sidebar .fill { height: 100%; width: 0; background: #fff; transition: width .3s; }
+  .sidebar .ptext { font-size: 11px; margin-top: 4px; color: #c9d3e6; }
+  .sidebar .reset { margin-top: 16px; background: transparent; border: 1px solid rgba(255,255,255,.5); color: #fff; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+  .sidebar .reset:hover { background: #fff; color: var(--red-dark); }
+  #nav-toggle { position: fixed; top: 10px; left: 10px; z-index: 20; background: var(--red); color: #fff; border: none; border-radius: 6px; width: 38px; height: 34px; font-size: 20px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,.25); }
+  #nav-toggle:hover { background: var(--red-dark); }
+  main { flex: 1; max-width: 960px; padding: 24px 44px 90px 44px; box-sizing: border-box; min-width: 0; }
+  body.nav-collapsed main { padding-left: 64px; }
+  h2, .step, .glossary-item, .session-banner { scroll-margin-top: 16px; }
+  a { color: var(--red); }
+  a.anchor { color: #9fb7c9; text-decoration: none; margin-left: 6px; font-weight: normal; font-size: 0.8em; opacity: 0; }
+  h2:hover a.anchor, .step-head:hover a.anchor { opacity: 1; }
+  .step-head a.anchor { color: #fff; float: right; }
+  a.fnref { text-decoration: none; vertical-align: super; padding: 0 2px; }
+  a.fnref:hover { background: var(--red-light); border-radius: 3px; }
+  a.back { text-decoration: none; font-size: 0.9em; color: #8e6bb8; margin-left: 4px; }
+  .glossary-item:target, .step:target { outline: 2px solid var(--red); outline-offset: 4px; border-radius: 4px; }
+  h2:target { background: var(--red-light); }
+  .done-label { display: inline-block; margin-right: 8px; vertical-align: middle; }
+  .done-label input { width: 18px; height: 18px; accent-color: var(--red); cursor: pointer; vertical-align: middle; }
+  .step-head .done-label input { accent-color: #fff; }
+  h2.is-done { color: #999; border-bottom-color: #ddd; }
+  .step.is-done .step-head { background: #9e9e9e; }
+  .step.is-done .step-body { border-color: #ddd; }
+  .totop { position: fixed; right: 24px; bottom: 24px; background: var(--red); color: #fff; text-decoration: none; padding: 8px 12px; border-radius: 20px; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+  @media (max-width: 900px) { .sidebar { position: fixed; z-index: 10; } main { padding: 56px 16px 60px 16px; } body.nav-collapsed main { padding-left: 16px; } }
+  @media print { .sidebar, .totop, #nav-toggle, a.anchor, a.back, .done-label { display: none; } .layout { display: block; } main { max-width: none; padding: 0; } a { color: inherit; text-decoration: none; } details.deep { border: none; } details.deep summary { display: none; } details.deep .deep-body { display: block; } }
+</style>
+</head>
+<body id="top">
+<button id="nav-toggle">✕</button>
+<div class="layout">
+<nav class="sidebar" id="sidebar">
+<div class="nav-title">🎨 CSS Lab — FrontFest</div>
+<div class="progress"><div class="bar"><div class="fill" id="progress-fill"></div></div><div class="ptext" id="progress-text">0 / 0</div></div>
+<ul>
+<li><a href="#sec-1" data-key="sec-1"><span class="mark"></span>1. Зачем CSS системно</a>
+</li>
+<li><a href="#sec-2" data-key="sec-2"><span class="mark"></span>2. Азбука CSS</a>
+</li>
+<li><a href="#sec-3" data-key="sec-3"><span class="mark"></span>3. Каскад под капотом</a>
+</li>
+<li><a href="#sec-4" data-key="sec-4"><span class="mark"></span>4. Box model и поток</a>
+</li>
+<li><a href="#sec-5" data-key="sec-5"><span class="mark"></span>5. Раскладки</a>
+</li>
+<li><a href="#sec-6" data-key="sec-6"><span class="mark"></span>6. Адаптивность</a>
+</li>
+<li><a href="#sec-7" data-key="sec-7"><span class="mark"></span>7. Цвет и темы</a>
+</li>
+<li><a href="#sec-8" data-key="sec-8"><span class="mark"></span>8. Современный CSS и Baseline</a>
+</li>
+<li><a href="#sec-9" data-key="sec-9"><span class="mark"></span>9. Стек и структура</a>
+</li>
+<li><a href="#sec-10" data-key="sec-10"><span class="mark"></span>10. Задания (6 сессий)</a>
+<ul class="nav-steps">
+<li class="nav-session"><a href="#session-1">Сессия 1</a></li>
+<li><a href="#step-1-1" data-key="step-1-1"><span class="mark"></span>1.1 Стенд и разметка</a></li>
+<li><a href="#step-1-2" data-key="step-1-2"><span class="mark"></span>1.2 Reset и типографика</a></li>
+<li><a href="#step-1-3" data-key="step-1-3"><span class="mark"></span>1.3 Каскад: война специфичности → @layer</a></li>
+<li><a href="#step-1-4" data-key="step-1-4"><span class="mark"></span>1.4 Box model: схлопывание margin</a></li>
+<li class="nav-session"><a href="#session-2">Сессия 2</a></li>
+<li><a href="#step-2-1" data-key="step-2-1"><span class="mark"></span>2.1 Токены: отступы и шрифты</a></li>
+<li><a href="#step-2-2" data-key="step-2-2"><span class="mark"></span>2.2 Цвет: oklch, color-mix</a></li>
+<li><a href="#step-2-3" data-key="step-2-3"><span class="mark"></span>2.3 Тёмная тема: light-dark()</a></li>
+<li><a href="#step-2-4" data-key="step-2-4"><span class="mark"></span>2.4 Текст: перенос, баланс, обрезка</a></li>
+<li class="nav-session"><a href="#session-3">Сессия 3</a></li>
+<li><a href="#step-3-1" data-key="step-3-1"><span class="mark"></span>3.1 Шапка и подвал</a></li>
+<li><a href="#step-3-2" data-key="step-3-2"><span class="mark"></span>3.2 grow / shrink / basis и min-width: auto</a></li>
+<li><a href="#step-3-3" data-key="step-3-3"><span class="mark"></span>3.3 Карточки тарифов</a></li>
+<li class="nav-session"><a href="#session-4">Сессия 4</a></li>
+<li><a href="#step-4-1" data-key="step-4-1"><span class="mark"></span>4.1 Каркас страницы и full-bleed</a></li>
+<li><a href="#step-4-2" data-key="step-4-2"><span class="mark"></span>4.2 auto-fill / auto-fit, minmax</a></li>
+<li><a href="#step-4-3" data-key="step-4-3"><span class="mark"></span>4.3 Таймлайн программы</a></li>
+<li><a href="#step-4-4" data-key="step-4-4"><span class="mark"></span>4.4 subgrid: выравнивание карточек</a></li>
+<li class="nav-session"><a href="#session-5">Сессия 5</a></li>
+<li><a href="#step-5-1" data-key="step-5-1"><span class="mark"></span>5.1 Mobile-first и медиазапросы</a></li>
+<li><a href="#step-5-2" data-key="step-5-2"><span class="mark"></span>5.2 Container queries</a></li>
+<li><a href="#step-5-3" data-key="step-5-3"><span class="mark"></span>5.3 :has(), :user-invalid, nesting</a></li>
+<li><a href="#step-5-4" data-key="step-5-4"><span class="mark"></span>5.4 Стилизация полей и фокус</a></li>
+<li class="nav-session"><a href="#session-6">Сессия 6</a></li>
+<li><a href="#step-6-1" data-key="step-6-1"><span class="mark"></span>6.1 sticky и контексты наложения</a></li>
+<li><a href="#step-6-2" data-key="step-6-2"><span class="mark"></span>6.2 Анимации, @property, popover</a></li>
+<li><a href="#step-6-3" data-key="step-6-3"><span class="mark"></span>6.3 View transitions между страницами</a></li>
+<li><a href="#step-6-4" data-key="step-6-4"><span class="mark"></span>6.4 Сборка и итог</a></li>
+</ul>
+</li>
+<li><a href="#sec-11" data-key="sec-11"><span class="mark"></span>11. Чек-лист концепций</a>
+</li>
+<li><a href="#sec-12" data-key="sec-12"><span class="mark"></span>12. Глоссарий</a>
+</li>
+<li><a href="#sec-13" data-key="sec-13"><span class="mark"></span>13. Вопросы на понимание</a>
+</li>
+<li><a href="#sec-14" data-key="sec-14"><span class="mark"></span>14. Что дальше</a>
+</li></ul><button class="reset" id="reset-progress" title="Сбросить все отметки">Сбросить прогресс</button></nav>
+<main>
+
+<h1>🎨 CSS Lab — FrontFest</h1>
+<p class="subtitle">Современный CSS с нуля на сайте фронтенд-конференции: главная, программа-таймлайн, регистрация. Разметка выдаётся готовой, вы пишете только стили. Каскад и слои → токены, цвет и темы → Flexbox → Grid и subgrid → адаптив, container queries, <code>:has()</code> и формы → позиционирование, анимации, view transitions и сборка. Без фреймворков и препроцессоров.</p>
+
+<div class="toc"><b>Как устроена лаба.</b> Разделы 1–9 — теория: зачем учить CSS системно перед Tailwind, азбука, каскад под капотом, box model и потоки, раскладки, адаптивность, цвет и темы, современные возможности и Baseline, структура проекта. Раздел 10 — шесть сессий заданий (~20 часов). Почти в каждой есть шаг «сломать → починить»: война специфичности и <code>!important</code>, схлопывание margin, flex-элемент, который не сжимается, auto-fill против auto-fit, sticky, убитый <code>overflow: hidden</code>, z-index, который «не работает». У каждого шага: код → «зачем» → команда или действие → ожидаемый результат → «проверь себя». Разделы 11–14 — чек-лист, глоссарий, вопросы, что дальше. Галочки прогресса сохраняются в браузере.
+<p class="small">Отдельный репозиторий <code>css-lab</code>, ни от одной другой лабы не зависит. Никаких сборщиков: HTML-страницы и CSS-файлы, отдаваемые nginx. Главный инструмент — DevTools браузера (вкладки Elements → Styles, Computed, Layout); почти каждый шаг предлагает что-то в них посмотреть. Всё, что используется в основной части, входит в Baseline (раздел 8); более новые возможности помечены «прогрессивное улучшение». Ответы на «проверь себя» — в <span class="file">docs/css-notes.md</span>.</p></div>
+
+<h2 id="sec-1"><label class="done-label" title="Отметить раздел пройденным"><input type="checkbox" class="done" data-key="sec-1"></label>1. Зачем учить CSS системно — и почему до Tailwind <a class="anchor" href="#sec-1">#</a></h2>
+
+<p>Типичный путь: CSS учится «по ходу» копированием со Stack Overflow, стили множатся, <code>!important</code> побеждает <code>!important</code>, а потом приходит Tailwind — и кажется, что CSS знать уже не нужно. Это не так: Tailwind — это тот же CSS, записанный классами. <code>flex</code>, <code>grid-cols-[repeat(auto-fill,minmax(15rem,1fr))]</code>, <code>@container</code>, <code>has-[:checked]:</code> — если вы не понимаете, что за ними стоит, вы будете перебирать классы наугад так же, как раньше перебирали свойства.</p>
+<table>
+<tr><th>Проблема «CSS по ходу»</th><th>Корень</th><th>Где в лабе</th></tr>
+<tr><td>«Стиль не применяется», растёт <code>!important</code></td><td>непонимание каскада и специфичности</td><td>раздел 3, шаг 1.3 — каскадные слои</td></tr>
+<tr><td>Отступ «вылезает» из блока</td><td>схлопывание margin</td><td>раздел 4, шаг 1.4</td></tr>
+<tr><td>Текст раздвигает flex-раскладку</td><td><code>min-width: auto</code> у flex-элементов</td><td>шаг 3.2</td></tr>
+<tr><td>Магические числа <code>margin-top: 37px</code></td><td>нет системы токенов</td><td>шаг 2.1</td></tr>
+<tr><td>Карточка ломается в узкой колонке</td><td>медиазапросы там, где нужны container queries</td><td>раздел 6, шаг 5.2</td></tr>
+<tr><td>Тёмная тема — копия всех стилей</td><td>цвета не вынесены в переменные</td><td>раздел 7, шаг 2.3</td></tr>
+<tr><td>JS ради «показать блок, если отмечен чекбокс»</td><td>незнание <code>:has()</code></td><td>шаг 5.3</td></tr>
+<tr><td>z-index 9999 «не работает»</td><td>контексты наложения</td><td>шаг 6.1</td></tr>
+</table>
+<div class="insight-box"><span class="tag">ГЛАВНАЯ МЫСЛЬ ЛАБЫ</span> CSS — не набор свойств, а <b>система правил разрешения конфликтов</b> (каскад) плюс <b>алгоритмы раскладки</b> (flow, flex, grid). Когда стиль «не работает», вопрос не «какое свойство добавить», а «какой алгоритм сейчас раскладывает этот элемент и какое правило победило в каскаде». DevTools отвечают на оба вопроса: Styles показывает, кто кого перечеркнул, Computed — итог, Layout — сетки и flex-контейнеры.</div>
+<div class="next-box"><span class="tag">ПЕРЕД РАЗДЕЛОМ <a href="#sec-2">2</a></span><ul>
+<li>📖 <a href="https://web.dev/learn/css" target="_blank">web.dev: Learn CSS</a> — оглавление, 10 минут: карта того, что предстоит.</li>
+</ul></div>
+
+<h2 id="sec-2"><label class="done-label" title="Отметить раздел пройденным"><input type="checkbox" class="done" data-key="sec-2"></label>2. Азбука CSS — каждое понятие на примере FrontFest <a class="anchor" href="#sec-2">#</a></h2>
+
+<h3>2.1 Правило, селектор, объявление</h3>
+<pre><code>.speaker-card h3 {             /* селектор: кого стилизуем */
+  font-size: var(--step-1);    /* объявление: свойство: значение; */
+  color: var(--text);
+}</code></pre>
+<h3>2.2 Селекторы</h3>
+<table>
+<tr><th>Селектор</th><th>Выбирает</th><th>Пример в FrontFest</th></tr>
+<tr><td><code>h3</code>, <code>.plan</code>, <code>#main</code></td><td>тип, класс, id</td><td>заголовки, карточки тарифа, основная область</td></tr>
+<tr><td><code>.plan h3</code> / <code>.plan &gt; h3</code></td><td>потомок / прямой ребёнок</td><td>заголовок внутри карточки</td></tr>
+<tr><td><code>h2 + p</code> / <code>h2 ~ p</code></td><td>следующий сосед / все последующие соседи</td><td>абзац сразу после заголовка</td></tr>
+<tr><td><code>[aria-current="page"]</code></td><td>по атрибуту</td><td>активный пункт навигации</td></tr>
+<tr><td><code>:hover</code>, <code>:focus-visible</code>, <code>:checked</code>, <code>:user-invalid</code></td><td>псевдоклассы состояния</td><td>кнопки, поля формы</td></tr>
+<tr><td><code>:first-child</code>, <code>:nth-child(2n)</code>, <code>:not(.x)</code></td><td>структурные</td><td>зебра в расписании</td></tr>
+<tr><td><code>:is(h1, h2, h3)</code> / <code>:where(...)</code></td><td>список; <code>:where</code> — с нулевой специфичностью</td><td>общие стили заголовков, reset</td></tr>
+<tr><td><code>.field:has(:user-invalid)</code></td><td>«родитель, если внутри есть…»</td><td>подсветка поля формы (5.3)</td></tr>
+<tr><td><code>::before</code>, <code>::after</code>, <code>::marker</code>, <code>::placeholder</code></td><td>псевдоэлементы</td><td>галочки в списке тарифа</td></tr>
+</table>
+
+<h3>2.3 Каскад, специфичность, наследование</h3>
+<p>Когда к элементу подходят несколько правил с одним свойством, побеждает одно — по каскаду (раздел 3). Некоторые свойства <b>наследуются</b> от родителя (<code>color</code>, <code>font-*</code>, <code>line-height</code>), другие нет (<code>margin</code>, <code>border</code>, <code>background</code>). Ключевые слова <code>inherit</code>, <code>initial</code>, <code>unset</code>, <code>revert</code>, <code>revert-layer</code> управляют этим явно.</p>
+
+<h3>2.4 Box model</h3>
+<p>Каждый элемент — прямоугольник: content → padding → border → margin. <code>box-sizing: border-box</code> включает padding и border в <code>width</code>, и именно так ожидает большинство людей. Раздел 4.</p>
+
+<h3>2.5 <code>display</code></h3>
+<p>Задаёт две вещи: как элемент ведёт себя <i>снаружи</i> (block или inline в потоке родителя) и как раскладывает <i>детей</i> (flow, flex, grid). <code>display: flex</code> — это «снаружи block, внутри flex»; <code>inline-flex</code> — «снаружи inline, внутри flex». <code>display: none</code> убирает элемент из раскладки, <code>contents</code> убирает сам бокс, оставляя детей.</p>
+
+<h3>2.6 Единицы</h3>
+<table>
+<tr><th>Единица</th><th>Относительно чего</th><th>Когда</th></tr>
+<tr><td><code>rem</code></td><td>размер шрифта корня</td><td>шрифты, отступы — уважает настройки пользователя</td></tr>
+<tr><td><code>em</code></td><td>размер шрифта элемента</td><td>отступы внутри кнопки, которые растут с её текстом</td></tr>
+<tr><td><code>%</code></td><td>родитель (для ширины — ширина блока-контейнера)</td><td>ширины, позиционирование</td></tr>
+<tr><td><code>ch</code></td><td>ширина символа «0»</td><td>длина строки текста: <code>max-inline-size: 65ch</code></td></tr>
+<tr><td><code>vw</code>, <code>vh</code>, <code>dvh</code>, <code>svh</code></td><td>окно просмотра; <code>dvh</code> учитывает панели мобильного браузера</td><td>полноэкранный hero: <code>min-block-size: 100dvh</code></td></tr>
+<tr><td><code>cqi</code>, <code>cqb</code></td><td>контейнер запроса</td><td>размер шрифта карточки от её ширины (5.2)</td></tr>
+<tr><td><code>fr</code></td><td>доля свободного места в grid</td><td>колонки сетки</td></tr>
+<tr><td><code>px</code></td><td>CSS-пиксель</td><td>толщина рамок, тени</td></tr>
+</table>
+
+<h3>2.7 Функции</h3>
+<p><code>calc(100% - 2rem)</code> — арифметика с разными единицами. <code>min()</code>, <code>max()</code>, <code>clamp(min, preferred, max)</code> — выбор значения; <code>clamp(1rem, 0.9rem + 0.5vw, 1.25rem)</code> — «резиновый» размер шрифта в пределах. <code>var(--x, fallback)</code> — переменная.</p>
+
+<h3>2.8 Custom properties (CSS-переменные)</h3>
+<pre><code>:root { --brand: oklch(52% 0.2 295); --radius: 0.75rem; }
+.btn  { background: var(--brand); border-radius: var(--radius); }
+.plan-featured { --brand: oklch(60% 0.18 330); }   /* переопределение действует на всё поддерево */</code></pre>
+<p>В отличие от переменных Sass, custom properties живут в браузере, <b>наследуются</b> и меняются в рантайме — поэтому на них строятся темы (2.3) и контекстные варианты компонентов.</p>
+
+<h3>2.9 At-rules</h3>
+<table>
+<tr><th>Правило</th><th>Что делает</th><th>Шаг</th></tr>
+<tr><td><code>@import</code></td><td>подключает файл (можно сразу в слой)</td><td>1.1, 1.3</td></tr>
+<tr><td><code>@layer</code></td><td>каскадные слои: порядок приоритета групп стилей</td><td>1.3</td></tr>
+<tr><td><code>@media</code></td><td>условия устройства: ширина окна, тема ОС, reduced motion</td><td>5.1, 6.2</td></tr>
+<tr><td><code>@container</code></td><td>условия размера контейнера</td><td>5.2</td></tr>
+<tr><td><code>@supports</code></td><td>проверка поддержки свойства</td><td>6.3</td></tr>
+<tr><td><code>@keyframes</code>, <code>@property</code>, <code>@starting-style</code></td><td>анимации, типизированные переменные, начальный стиль появления</td><td>6.2</td></tr>
+<tr><td><code>@font-face</code></td><td>подключение шрифта</td><td>1.2 (deep)</td></tr>
+</table>
+
+<h3>2.10 Вложенность (nesting)</h3>
+<pre><code>.plan {
+  padding: var(--space-5);
+  &amp; h3 { margin: 0; }             /* .plan h3 */
+  &amp;:hover { translate: 0 -2px; }   /* .plan:hover */
+  .pricing:has(&amp;:hover) &amp; { }      /* &amp; можно ставить в любом месте */
+  @media (width &gt;= 48rem) { padding: var(--space-6); }
+}</code></pre>
+<p>Нативная вложенность в Baseline с 2023 года — Sass для неё больше не нужен. Правило лабы: не глубже двух уровней, иначе специфичность растёт незаметно.</p>
+
+<div class="next-box"><span class="tag">ПЕРЕД РАЗДЕЛОМ <a href="#sec-3">3</a></span><ul>
+<li>📖 <a href="https://developer.mozilla.org/ru/docs/Learn_web_development/Core/Styling_basics/Handling_conflicts" target="_blank">MDN: Cascade, specificity, inheritance</a> — 20 минут.</li>
+</ul></div>
+
+<h2 id="sec-3"><label class="done-label" title="Отметить раздел пройденным"><input type="checkbox" class="done" data-key="sec-3"></label>3. Каскад под капотом: происхождение, слои, специфичность, порядок <a class="anchor" href="#sec-3">#</a></h2>
+
+<p>Когда два объявления претендуют на одно свойство одного элемента, браузер сравнивает их по критериям <b>строго по порядку</b>. До следующего критерия дело доходит, только если на текущем ничья.</p>
+<table>
+<tr><th>#</th><th>Критерий</th><th>Что побеждает</th></tr>
+<tr><td>1</td><td><b>Происхождение и важность</b></td><td>стили пользователя и <code>!important</code> в особом порядке (ниже); обычно — стили автора против стилей браузера (user-agent)</td></tr>
+<tr><td>2</td><td><b>Контекст</b></td><td>стили Shadow DOM против внешних — для веб-компонентов</td></tr>
+<tr><td>3</td><td><b>Стиль в атрибуте</b> <code>style=""</code></td><td>инлайн побеждает любые селекторы</td></tr>
+<tr><td>4</td><td><b>Каскадные слои</b> (<code>@layer</code>)</td><td>для обычных объявлений побеждает <b>более поздний</b> слой; стили вне слоёв сильнее любого слоя</td></tr>
+<tr><td>5</td><td><b>Специфичность</b></td><td>(id, класс/атрибут/псевдокласс, тип/псевдоэлемент) — сравнивается слева направо</td></tr>
+<tr><td>6</td><td><b>Порядок в коде</b></td><td>при равенстве — более позднее</td></tr>
+</table>
+<p>Главное следствие четвёртой строки: <b>слои проверяются до специфичности</b>. Правило <code>.btn</code> в слое <code>components</code> побеждает <code>#main .speaker-list li .btn</code> в слое <code>vendor</code>, если <code>components</code> объявлен позже. Так слои заканчивают войну специфичности: вместо «перебить селектором посильнее» — «положить в правильный слой».</p>
+<pre><code>@layer reset, vendor, tokens, base, layout, components, utilities;   /* порядок объявляется один раз */</code></pre>
+<table>
+<tr><th>Селектор</th><th>Специфичность</th><th>Комментарий</th></tr>
+<tr><td><code>h3</code></td><td>(0, 0, 1)</td><td></td></tr>
+<tr><td><code>.speaker-card h3</code></td><td>(0, 1, 1)</td><td></td></tr>
+<tr><td><code>.plan-featured .price</code></td><td>(0, 2, 0)</td><td></td></tr>
+<tr><td><code>#main .speaker-list li h3</code></td><td>(1, 1, 2)</td><td>один id перевешивает любое число классов</td></tr>
+<tr><td><code>:is(#main, .x) h3</code></td><td>(1, 0, 1)</td><td><code>:is</code> берёт специфичность самого сильного аргумента</td></tr>
+<tr><td><code>:where(#main, .x) h3</code></td><td>(0, 0, 1)</td><td><code>:where</code> всегда обнуляет свои аргументы</td></tr>
+<tr><td><code>.field:has(:user-invalid)</code></td><td>(0, 2, 0)</td><td><code>:has</code>, <code>:not</code> — как у самого сильного аргумента</td></tr>
+</table>
+<details class="deep"><summary>🔬 Под капотом: почему у <code>!important</code> порядок слоёв переворачивается</summary><div class="deep-body">
+<p><code>!important</code> — не «очень сильно», а переход в отдельный, зеркальный ярус каскада. Для важных объявлений порядок происхождения переворачивается (важные стили пользователя сильнее важных стилей автора — так человек с плохим зрением может навязать свой размер шрифта), и порядок слоёв тоже: важное объявление в <b>раннем</b> слое побеждает важное в позднем. Смысл — дать базовым слоям (reset, vendor) способ сказать «это нельзя переопределить случайно». Отсюда правило лабы: <code>!important</code> допустим только в утилитах вроде <code>.visually-hidden</code>, чей смысл — «всегда».</p>
+</div></details>
+
+<h2 id="sec-4"><label class="done-label" title="Отметить раздел пройденным"><input type="checkbox" class="done" data-key="sec-4"></label>4. Box model, нормальный поток и контексты форматирования <a class="anchor" href="#sec-4">#</a></h2>
+
+<p>Без <code>display: flex/grid</code> элементы раскладывает <b>нормальный поток</b> (flow layout): блочные идут сверху вниз и занимают всю ширину, строчные текут в строке, как слова.</p>
+<pre><code>┌──────────────── margin ─────────────────┐
+│ ┌────────────── border ───────────────┐ │
+│ │ ┌──────────── padding ────────────┐ │ │
+│ │ │            content              │ │ │   width (content-box) = только content
+│ │ └─────────────────────────────────┘ │ │   width (border-box)  = content + padding + border
+│ └─────────────────────────────────────┘ │
+└─────────────────────────────────────────┘</code></pre>
+<h3>Схлопывание margin</h3>
+<p>Вертикальные (block-direction) margin соседних блоков в потоке <b>не складываются, а схлопываются</b> до большего: <code>margin-bottom: 2rem</code> и <code>margin-top: 3rem</code> дают 3rem. Коварный случай — margin первого ребёнка «проваливается» сквозь родителя без padding и border: <code>h1</code> с <code>margin-top</code> внутри <code>section</code> с фоном сдвигает всю секцию вместо отступа внутри. Схлопывание отключается у flex- и grid-элементов, при padding или border у родителя и в новом контексте форматирования.</p>
+<h3>Контекст форматирования блока (BFC)</h3>
+<p>Изолированная область, внутри которой раскладка не влияет на внешнюю: margin не проваливаются наружу, float не вылезают. Создают его <code>display: flow-root</code> (специально для этого), flex- и grid-контейнеры, <code>overflow</code> не <code>visible</code>, <code>position: absolute</code>.</p>
+<h3>Логические свойства</h3>
+<p><code>margin-block</code>, <code>padding-inline</code>, <code>inset-inline-start</code>, <code>inline-size</code> — вместо top/right/bottom/left и width/height. Привязаны к направлению письма: для арабского интерфейса (<code>dir="rtl"</code>) <code>padding-inline-start</code> окажется справа сам. В лабе используем логические свойства по умолчанию.</p>
+
+<h2 id="sec-5"><label class="done-label" title="Отметить раздел пройденным"><input type="checkbox" class="done" data-key="sec-5"></label>5. Раскладки: flow, Flexbox, Grid — когда что <a class="anchor" href="#sec-5">#</a></h2>
+
+<table>
+<tr><th></th><th>Flexbox</th><th>Grid</th></tr>
+<tr><td>Измерений</td><td>одно (ряд или колонка), перенос — отдельные строки без выравнивания между ними</td><td>два: строки и колонки одновременно</td></tr>
+<tr><td>Кто решает размер</td><td><b>контент</b>: элементы растягиваются и сжимаются от своего размера</td><td><b>контейнер</b>: сетка задаётся, элементы в неё встают</td></tr>
+<tr><td>Типичное</td><td>шапка, кнопки в ряд, медиа-объект (картинка + текст), центрирование</td><td>макет страницы, карточки одинаковой ширины, таймлайн, выравнивание между карточками (subgrid)</td></tr>
+<tr><td>В FrontFest</td><td>шапка (3.1), кнопки hero, карточка тарифа внутри (3.3)</td><td>каркас страницы (4.1), спикеры (4.2), программа (4.3), тарифы (4.4)</td></tr>
+</table>
+<p>Эмпирическое правило: если вы задаёте ширины элементам, чтобы они встали в колонки, — нужен Grid; если элементы должны занять столько, сколько им нужно, а остаток поделить — Flexbox.</p>
+<h3>Главные свойства</h3>
+<pre><code>.header { display: flex; align-items: center; gap: 1rem; }      /* flex-контейнер */
+.header .theme-toggle { margin-inline-start: auto; }             /* «оттолкнуть вправо» */
+.card { flex: 1 1 16rem; }                                        /* grow shrink basis */
+
+.speakers { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1.5rem; }
+.page { display: grid; grid-template-rows: auto 1fr auto; min-block-size: 100dvh; }
+.session { grid-column: a; grid-row: t1000 / t1130; }            /* по именованным линиям */</code></pre>
+<details class="deep"><summary>🔬 Под капотом: как flex делит место</summary><div class="deep-body">
+<p>1) Каждому элементу берётся базовый размер <code>flex-basis</code> (или ширина контента при <code>auto</code>). 2) Считается свободное место = контейнер − сумма базовых. 3) Если место есть — оно делится пропорционально <code>flex-grow</code>. Если места не хватает — элементы сжимаются пропорционально <code>flex-shrink × basis</code>. 4) Но ни один элемент не сожмётся меньше своего <b>минимального размера</b>, а у flex-элементов по умолчанию <code>min-width: auto</code> — ширина самого длинного неразрывного слова или картинки. Отсюда баг шага 3.2: длинный URL не даёт колонке сжаться, и раскладка вылезает за экран. <code>flex: 1</code> — это <code>1 1 0%</code>: базовый размер ноль, всё место делится поровну, а не «поровну сверх контента».</p>
+</div></details>
+<div class="next-box"><span class="tag">ПЕРЕД РАЗДЕЛОМ <a href="#sec-6">6</a></span><ul>
+<li>📖 <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/" target="_blank">A Complete Guide to Flexbox</a> и <a href="https://css-tricks.com/snippets/css/complete-guide-grid/" target="_blank">A Complete Guide to Grid</a> — держать открытыми как справочник.</li>
+<li>🎮 Если хочется потренировать руку: <a href="https://flexboxfroggy.com/#ru" target="_blank">Flexbox Froggy</a> и <a href="https://cssgridgarden.com/#ru" target="_blank">Grid Garden</a>.</li>
+</ul></div>
+
+<h2 id="sec-6"><label class="done-label" title="Отметить раздел пройденным"><input type="checkbox" class="done" data-key="sec-6"></label>6. Адаптивность: intrinsic-дизайн, медиазапросы, container queries <a class="anchor" href="#sec-6">#</a></h2>
+
+<p>Современный подход — сначала сделать раскладку, которая <b>сама</b> подстраивается под место (intrinsic design), и только потом добавлять точки перелома.</p>
+<table>
+<tr><th>Приём</th><th>Как</th><th>Нужен ли медиазапрос</th></tr>
+<tr><td>Резиновый шрифт и отступы</td><td><code>clamp(1rem, 0.9rem + 0.5vw, 1.25rem)</code></td><td>нет</td></tr>
+<tr><td>Колонки «сколько влезет»</td><td><code>repeat(auto-fill, minmax(min(100%, 15rem), 1fr))</code></td><td>нет</td></tr>
+<tr><td>Элементы в ряд с переносом</td><td><code>flex-wrap: wrap</code> + <code>flex: 1 1 16rem</code></td><td>нет</td></tr>
+<tr><td>Длина строки текста</td><td><code>max-inline-size: 65ch</code></td><td>нет</td></tr>
+<tr><td>Смена структуры страницы</td><td><code>@media (width &gt;= 48rem)</code></td><td>да — зависит от окна</td></tr>
+<tr><td>Смена вида компонента</td><td><code>@container (inline-size &gt; 22rem)</code></td><td>container query — зависит от места компонента</td></tr>
+</table>
+<h3>Медиазапрос против container query</h3>
+<p>Медиазапрос спрашивает «какой ширины <b>окно</b>». Карточка спикера на главной (широкая сетка) и в боковой колонке программы (узкая) живёт в окне одной ширины, но места у неё разное. Container query спрашивает «какой ширины <b>мой контейнер</b>» — и компонент становится переносимым: один CSS, правильный вид в любом месте.</p>
+<pre><code>.speaker { container-type: inline-size; }                 /* предок объявляется контейнером */
+@container (inline-size &gt; 24rem) {
+  .speaker-card { grid-template-columns: 8rem 1fr; }       /* стилизуются потомки, не сам контейнер */
+}</code></pre>
+<p>Mobile-first: базовые стили — для узкого экрана, медиазапросы с <code>&gt;=</code> добавляют сложность по мере роста места. Синтаксис диапазонов <code>(width &gt;= 48rem)</code> в Baseline с 2023 года и читается лучше, чем <code>(min-width: 48rem)</code>.</p>
+
+<h2 id="sec-7"><label class="done-label" title="Отметить раздел пройденным"><input type="checkbox" class="done" data-key="sec-7"></label>7. Цвет и темы: oklch, color-mix, light-dark() <a class="anchor" href="#sec-7">#</a></h2>
+
+<p><code>oklch(L C H)</code> — цветовое пространство, где <b>L</b> (светлота, 0–100%) соответствует тому, как свет воспринимает глаз. В HSL жёлтый и синий с одинаковой «lightness 50%» выглядят совсем разной яркости; в oklch одинаковое L — одинаковая воспринимаемая яркость. Поэтому палитру и контраст удобно строить в oklch: меняем L — получаем оттенки, меняем H — получаем другой цвет той же яркости.</p>
+<pre><code>--brand:        oklch(52% 0.2 295);                                  /* фиолетовый */
+--brand-hover:  color-mix(in oklch, var(--brand), black 15%);        /* смешивание */
+--brand-soft:   oklch(from var(--brand) 95% 0.04 h);                 /* относительный цвет: та же H, другие L и C */</code></pre>
+<h3>Тёмная тема без дублирования</h3>
+<pre><code>:root {
+  color-scheme: light dark;                                          /* по умолчанию — как в ОС */
+  --bg:   light-dark(oklch(98.5% 0.005 295), oklch(18% 0.02 295));
+  --text: light-dark(oklch(22% 0.02 295),   oklch(93% 0.01 295));
+}
+:root[data-theme="light"] { color-scheme: light; }                  /* ручной выбор перебивает ОС */
+:root[data-theme="dark"]  { color-scheme: dark; }</code></pre>
+<p><code>light-dark(a, b)</code> выбирает значение по вычисленному <code>color-scheme</code> элемента. Переключатель темы меняет одно свойство, и все токены переключаются сами. Бонус: <code>color-scheme</code> перекрашивает и то, что рисует браузер, — полосы прокрутки, поля ввода, чекбоксы.</p>
+
+<h2 id="sec-8"><label class="done-label" title="Отметить раздел пройденным"><input type="checkbox" class="done" data-key="sec-8"></label>8. Современные возможности и что такое Baseline <a class="anchor" href="#sec-8">#</a></h2>
+
+<p><b>Baseline</b> — статус возможности на <a href="https://web.dev/baseline" target="_blank">web.dev/baseline</a> и в MDN. «Newly available» — поддерживается во всех основных браузерах (Chrome, Edge, Firefox, Safari) последних версий; «Widely available» — уже 30 месяцев, можно использовать без оглядки. В лабе основная часть — Baseline; более новые вещи используются как <b>прогрессивное улучшение</b>: без них всё работает, с ними — лучше.</p>
+<table>
+<tr><th>Возможность</th><th>Что даёт</th><th>Статус (сверяйтесь с caniuse)</th><th>Шаг</th></tr>
+<tr><td><code>@layer</code></td><td>порядок групп стилей важнее специфичности</td><td>Baseline, widely</td><td>1.3</td></tr>
+<tr><td>Nesting</td><td>вложенные правила без препроцессора</td><td>Baseline</td><td>везде</td></tr>
+<tr><td><code>oklch()</code>, <code>color-mix()</code></td><td>палитра и смешивание</td><td>Baseline</td><td>2.2</td></tr>
+<tr><td><code>light-dark()</code></td><td>тема одним свойством</td><td>Baseline 2024</td><td>2.3</td></tr>
+<tr><td><code>text-wrap: balance</code> / <code>pretty</code></td><td>ровные заголовки / абзацы без висячих слов</td><td>balance — Baseline; pretty — прогрессивно</td><td>2.4</td></tr>
+<tr><td><code>subgrid</code></td><td>выравнивание между карточками</td><td>Baseline</td><td>4.4</td></tr>
+<tr><td>Container queries (size)</td><td>компоненты от своего места</td><td>Baseline</td><td>5.2</td></tr>
+<tr><td><code>:has()</code></td><td>«родительский селектор»</td><td>Baseline</td><td>5.3</td></tr>
+<tr><td><code>:user-invalid</code></td><td>ошибка только после взаимодействия</td><td>Baseline</td><td>5.3</td></tr>
+<tr><td><code>@starting-style</code>, <code>transition-behavior</code></td><td>анимация появления и <code>display: none</code></td><td>Baseline 2024</td><td>6.2</td></tr>
+<tr><td><code>@property</code></td><td>типизированная переменная, которую можно анимировать</td><td>Baseline 2024</td><td>6.2</td></tr>
+<tr><td>Popover API</td><td>всплывающее окно без JS</td><td>Baseline 2024</td><td>6.2</td></tr>
+<tr><td>Cross-document view transitions</td><td>анимация между страницами</td><td>прогрессивно</td><td>6.3</td></tr>
+<tr><td><code>field-sizing: content</code>, <code>interpolate-size</code>, <code>::details-content</code></td><td>авторазмер поля, анимация до <code>auto</code></td><td>прогрессивно</td><td>5.4, 6.2</td></tr>
+</table>
+
+<h2 id="sec-9"><label class="done-label" title="Отметить раздел пройденным"><input type="checkbox" class="done" data-key="sec-9"></label>9. Стек, разметка, структура CSS <a class="anchor" href="#sec-9">#</a></h2>
+
+<table>
+<tr><th>Компонент</th><th>Выбор</th><th>Зачем</th></tr>
+<tr><td>Страницы</td><td>три HTML-файла, выдаются готовыми по мере надобности</td><td>лаба про стили; семантическая разметка — образец</td></tr>
+<tr><td>Стили</td><td>чистый CSS, <code>@import</code> в каскадные слои, nesting</td><td>всё, что раньше требовало Sass, теперь в браузере</td></tr>
+<tr><td>JS</td><td>один крошечный <span class="file">theme.js</span> (переключатель темы), выдаётся готовым</td><td>всё остальное — CSS: аккордеоны, условные блоки формы, popover</td></tr>
+<tr><td>Сервер</td><td>nginx в Docker, <code>:8080</code></td><td>для view transitions и корректных путей нужен настоящий HTTP</td></tr>
+<tr><td>Сборка (сессия 6)</td><td>Lightning CSS CLI</td><td>склеить импорты, минифицировать, добавить фолбэки для целевых браузеров</td></tr>
+</table>
+<pre><code>css-lab/
+├── docker-compose.yml          nginx :8080 → ./site
+├── site/
+│   ├── index.html              главная: hero, спикеры, тарифы, вопросы (1.1)
+│   ├── schedule.html           программа-таймлайн (4.3)
+│   ├── register.html           регистрация (5.3)
+│   ├── img/                    speaker-1.svg … speaker-6.svg
+│   ├── js/theme.js             переключатель темы (готовый)
+│   └── css/
+│       ├── main.css            порядок слоёв + @import
+│       ├── reset.css           @layer reset
+│       ├── vendor-widget.css   «чужой» CSS с тяжёлыми селекторами (1.3)
+│       ├── tokens.css          @layer tokens — отступы, шрифты, цвета, темы
+│       ├── base.css            @layer base — элементы: body, h1–h3, a, img
+│       ├── layout.css          @layer layout — каркас страницы, секции, сетки
+│       ├── components.css      @layer components — btn, speaker-card, plan, faq, form…
+│       └── utilities.css       @layer utilities — visually-hidden, flow и т. п.
+├── dist/                        собранный CSS (сессия 6)
+└── docs/css-notes.md           ответы «проверь себя»</code></pre>
+<h3>Как браузер применяет один стиль: заголовок карточки спикера</h3>
+<pre><code>&lt;h3&gt; внутри .speaker-card
+  1. Правила-кандидаты: reset (h1..h6 margin 0) · vendor-widget (#main .speaker-list li h3 { color: red })
+     · base (h3 { font-size: var(--step-1) }) · components (.speaker-card h3 { color: var(--text) })
+  2. color: vendor (1,1,2) против components (0,1,1)
+       без слоёв → побеждает vendor по специфичности (красный заголовок)
+       со слоями @layer reset, vendor, …, components → components позже vendor → побеждает он,
+       специфичность даже не сравнивается
+  3. font-size: var(--step-1) → токен clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem) → computed ~20px
+  4. line-height наследуется от body (1.6), color-scheme определяет, какой цвет вернёт light-dark()</code></pre>
+<div class="next-box"><span class="tag">ПЕРЕД РАЗДЕЛОМ <a href="#sec-10">10</a></span><ul>
+<li>✅ Docker; свободен порт 8080; браузер Chrome или Firefox последней версии (для прогрессивных шагов удобнее Chrome); VS Code.</li>
+<li>📖 Откройте DevTools → Elements и найдите вкладки Styles, Computed, Layout — с ними работаем каждую сессию.</li>
+</ul></div>
+
+<h2 id="sec-10"><label class="done-label" title="Отметить раздел пройденным"><input type="checkbox" class="done" data-key="sec-10"></label>10. Задания: шесть сессий <a class="anchor" href="#sec-10">#</a></h2>
+
+<p>Порядок строгий. Стили пишутся в файлах <span class="file">site/css/*.css</span>, результат проверяется в браузере на <code>localhost:8080</code> (обновление — F5; кеш nginx для CSS отключён) и в DevTools. Разметку <b>не меняем</b>, кроме случаев, когда шаг это прямо говорит: цель — научиться добиваться нужного вида стилями. Ответы — в <span class="file">docs/css-notes.md</span>.</p>
+<table>
+<tr><th>Сессия</th><th>Тема</th><th>Концепции</th><th>Результат</th></tr>
+<tr><td>1</td><td>Основы и каскад</td><td>reset, типографика, единицы, специфичность, <code>@layer</code>, <code>:where</code>, box model, схлопывание margin, логические свойства</td><td>аккуратная типографика; побеждён «чужой» CSS</td></tr>
+<tr><td>2</td><td>Токены, цвет, темы, текст</td><td>custom properties, шкалы с <code>clamp</code>, oklch, <code>color-mix</code>, <code>light-dark()</code>, <code>text-wrap</code>, переполнение</td><td>дизайн-система на переменных, светлая и тёмная темы</td></tr>
+<tr><td>3</td><td>Flexbox</td><td>ось, <code>gap</code>, <code>margin: auto</code>, grow/shrink/basis, <code>min-width: auto</code>, перенос</td><td>шапка, кнопки, карточки тарифов</td></tr>
+<tr><td>4</td><td>Grid</td><td>области, full-bleed на именованных линиях, auto-fill/auto-fit, размещение по линиям, subgrid</td><td>каркас, спикеры, таймлайн программы, выровненные тарифы</td></tr>
+<tr><td>5</td><td>Адаптив, селекторы, формы</td><td>mobile-first, container queries, <code>:has()</code>, <code>:user-invalid</code>, стилизация форм, фокус</td><td>всё адаптивно; форма без JS</td></tr>
+<tr><td>6</td><td>Позиционирование, движение, сборка</td><td>sticky, контексты наложения, transitions, keyframes, <code>@property</code>, popover, view transitions, reduced motion, Lightning CSS</td><td>живой интерфейс и собранный CSS</td></tr>
+</table>
+
+<div class="session-banner" id="session-1">Сессия <a href="#session-1" style="color:#fff;text-decoration:none">1</a> — Основы и каскад: стенд, reset, типографика, слои, box model <span>~3 часа</span></div>
+
+<div class="step" id="step-1-1"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-1-1"></label><span class="num">Шаг 1.1</span>Стенд: nginx, готовая разметка главной, файлы стилей<a class="anchor" href="#step-1-1">#</a></span><div class="step-body">
+<pre><code>mkdir css-lab &amp;&amp; cd css-lab &amp;&amp; git init
+mkdir -p site/css site/js site/img docs &amp;&amp; touch docs/css-notes.md</code></pre>
+<pre><code># docker-compose.yml
+services:
+  web:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./site:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports: ["8080:80"]</code></pre>
+<pre><code># nginx.conf — без кеша: правка CSS видна после F5
+server {
+  listen 80;
+  root /usr/share/nginx/html;
+  location / { add_header Cache-Control "no-store"; try_files $uri $uri/ =404; }
+}</code></pre>
+<pre><code>&lt;!-- site/index.html — готовая разметка, её не меняем --&gt;
+&lt;!doctype html&gt;
+&lt;html lang="ru"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+  &lt;title&gt;FrontFest 2026 — конференция о фронтенде&lt;/title&gt;
+  &lt;link rel="stylesheet" href="css/main.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header class="site-header"&gt;
+    &lt;a class="logo" href="index.html"&gt;Front&lt;span&gt;Fest&lt;/span&gt;&lt;/a&gt;
+    &lt;nav class="site-nav" aria-label="Основная навигация"&gt;
+      &lt;a href="index.html" aria-current="page"&gt;Главная&lt;/a&gt;
+      &lt;a href="schedule.html"&gt;Программа&lt;/a&gt;
+      &lt;a href="register.html"&gt;Регистрация&lt;/a&gt;
+    &lt;/nav&gt;
+    &lt;button class="theme-toggle" type="button" aria-label="Сменить тему"&gt;◐&lt;/button&gt;
+  &lt;/header&gt;
+
+  &lt;main id="main"&gt;
+    &lt;section class="hero full-bleed"&gt;
+      &lt;p class="eyebrow"&gt;14–15 ноября 2026 · Москва и онлайн&lt;/p&gt;
+      &lt;h1&gt;FrontFest 2026: два дня о&amp;nbsp;том, как делать интерфейсы, которые не&amp;nbsp;стыдно показать&lt;/h1&gt;
+      &lt;p class="lead"&gt;Сорок докладов, воркшопы по CSS, доступности и производительности. Без воды и продающих презентаций.&lt;/p&gt;
+      &lt;div class="actions"&gt;
+        &lt;a class="btn btn-primary" href="register.html"&gt;Купить билет&lt;/a&gt;
+        &lt;a class="btn btn-ghost" href="schedule.html"&gt;Смотреть программу&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;section class="section" id="speakers"&gt;
+      &lt;h2&gt;Спикеры&lt;/h2&gt;
+      &lt;ul class="speaker-list" role="list"&gt;
+        &lt;li class="speaker"&gt;&lt;article class="speaker-card"&gt;
+          &lt;img src="img/speaker-1.svg" alt="" width="160" height="160"&gt;
+          &lt;div class="speaker-body"&gt;&lt;h3&gt;Анна Смирнова&lt;/h3&gt;&lt;p class="role"&gt;Frontend-архитектор, Банк «Север»&lt;/p&gt;
+            &lt;p class="talk"&gt;Каскадные слои: как навести порядок в CSS на двести тысяч строк&lt;/p&gt;&lt;/div&gt;
+        &lt;/article&gt;&lt;/li&gt;
+        &lt;li class="speaker"&gt;&lt;article class="speaker-card"&gt;
+          &lt;img src="img/speaker-2.svg" alt="" width="160" height="160"&gt;
+          &lt;div class="speaker-body"&gt;&lt;h3&gt;Игорь Ким&lt;/h3&gt;&lt;p class="role"&gt;Дизайн-инженер, «Маршрут»&lt;/p&gt;
+            &lt;p class="talk"&gt;Container queries в дизайн-системе: компоненты, которые знают своё место&lt;/p&gt;&lt;/div&gt;
+        &lt;/article&gt;&lt;/li&gt;
+        &lt;li class="speaker"&gt;&lt;article class="speaker-card"&gt;
+          &lt;img src="img/speaker-3.svg" alt="" width="160" height="160"&gt;
+          &lt;div class="speaker-body"&gt;&lt;h3&gt;Мария Орлова&lt;/h3&gt;&lt;p class="role"&gt;Специалист по доступности&lt;/p&gt;
+            &lt;p class="talk"&gt;Фокус, контраст, reduced motion: доступность, которую видно в CSS&lt;/p&gt;&lt;/div&gt;
+        &lt;/article&gt;&lt;/li&gt;
+        &lt;li class="speaker"&gt;&lt;article class="speaker-card"&gt;
+          &lt;img src="img/speaker-4.svg" alt="" width="160" height="160"&gt;
+          &lt;div class="speaker-body"&gt;&lt;h3&gt;Дмитрий Лебедев&lt;/h3&gt;&lt;p class="role"&gt;Performance-инженер&lt;/p&gt;
+            &lt;p class="talk"&gt;Почему ваш CLS 0,4: шрифты, картинки и раскладка без прыжков&lt;/p&gt;&lt;/div&gt;
+        &lt;/article&gt;&lt;/li&gt;
+        &lt;li class="speaker"&gt;&lt;article class="speaker-card"&gt;
+          &lt;img src="img/speaker-5.svg" alt="" width="160" height="160"&gt;
+          &lt;div class="speaker-body"&gt;&lt;h3&gt;Елена Васнецова&lt;/h3&gt;&lt;p class="role"&gt;Тимлид фронтенда, «Кинозал»&lt;/p&gt;
+            &lt;p class="talk"&gt;Сверхдлинноеназваниедокладабезединогопробеладляпроверкипереноса и анимации между страницами&lt;/p&gt;&lt;/div&gt;
+        &lt;/article&gt;&lt;/li&gt;
+        &lt;li class="speaker"&gt;&lt;article class="speaker-card"&gt;
+          &lt;img src="img/speaker-6.svg" alt="" width="160" height="160"&gt;
+          &lt;div class="speaker-body"&gt;&lt;h3&gt;Павел Громов&lt;/h3&gt;&lt;p class="role"&gt;Автор курса по Grid&lt;/p&gt;
+            &lt;p class="talk"&gt;Subgrid на практике&lt;/p&gt;&lt;/div&gt;
+        &lt;/article&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/section&gt;
+
+    &lt;section class="section" id="pricing"&gt;
+      &lt;h2&gt;Билеты&lt;/h2&gt;
+      &lt;div class="pricing"&gt;
+        &lt;article class="plan"&gt;
+          &lt;header class="plan-head"&gt;&lt;h3&gt;Онлайн&lt;/h3&gt;&lt;/header&gt;
+          &lt;p class="price"&gt;4 900 ₽&lt;/p&gt;
+          &lt;ul class="features"&gt;&lt;li&gt;Трансляция двух залов&lt;/li&gt;&lt;li&gt;Записи докладов&lt;/li&gt;&lt;/ul&gt;
+          &lt;a class="btn btn-ghost" href="register.html?plan=online"&gt;Выбрать&lt;/a&gt;
+        &lt;/article&gt;
+        &lt;article class="plan plan-featured"&gt;
+          &lt;header class="plan-head"&gt;&lt;h3&gt;Стандарт&lt;/h3&gt;&lt;p class="badge"&gt;Популярный&lt;/p&gt;&lt;/header&gt;
+          &lt;p class="price"&gt;14 900 ₽&lt;/p&gt;
+          &lt;ul class="features"&gt;&lt;li&gt;Оба дня офлайн&lt;/li&gt;&lt;li&gt;Обед и кофе-брейки&lt;/li&gt;&lt;li&gt;Записи докладов&lt;/li&gt;&lt;li&gt;Афтепати&lt;/li&gt;&lt;/ul&gt;
+          &lt;a class="btn btn-primary" href="register.html?plan=standard"&gt;Выбрать&lt;/a&gt;
+        &lt;/article&gt;
+        &lt;article class="plan"&gt;
+          &lt;header class="plan-head"&gt;&lt;h3&gt;С воркшопами&lt;/h3&gt;&lt;/header&gt;
+          &lt;p class="price"&gt;24 900 ₽&lt;/p&gt;
+          &lt;ul class="features"&gt;&lt;li&gt;Всё из «Стандарта»&lt;/li&gt;&lt;li&gt;Два воркшопа на выбор&lt;/li&gt;&lt;li&gt;Сертификат&lt;/li&gt;&lt;/ul&gt;
+          &lt;a class="btn btn-ghost" href="register.html?plan=workshops"&gt;Выбрать&lt;/a&gt;
+        &lt;/article&gt;
+      &lt;/div&gt;
+      &lt;p class="pricing-note"&gt;Не уверены? &lt;button class="link" type="button" popovertarget="standard-info"&gt;Что входит в «Стандарт»?&lt;/button&gt;&lt;/p&gt;
+      &lt;div id="standard-info" popover class="popover"&gt;
+        &lt;h3&gt;Что входит в «Стандарт»&lt;/h3&gt;
+        &lt;p&gt;Доступ в оба зала, обед, кофе-брейки, записи всех докладов через неделю и афтепати в пятницу.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;section class="section" id="faq"&gt;
+      &lt;h2&gt;Вопросы&lt;/h2&gt;
+      &lt;details class="faq-item" name="faq"&gt;&lt;summary&gt;Будут ли записи?&lt;/summary&gt;
+        &lt;p&gt;Да, записи всех докладов появятся в личном кабинете через неделю после конференции.&lt;/p&gt;&lt;/details&gt;
+      &lt;details class="faq-item" name="faq"&gt;&lt;summary&gt;Можно ли вернуть билет?&lt;/summary&gt;
+        &lt;p&gt;До 1 ноября — полностью, позже — со скидкой 50% или передать другому участнику.&lt;/p&gt;&lt;/details&gt;
+      &lt;details class="faq-item" name="faq"&gt;&lt;summary&gt;Есть ли скидки для студентов?&lt;/summary&gt;
+        &lt;p&gt;Да, 50% на «Онлайн» и «Стандарт» по студенческому билету.&lt;/p&gt;&lt;/details&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+
+  &lt;footer class="site-footer"&gt;
+    &lt;p&gt;© 2026 FrontFest. Сделано на чистом CSS.&lt;/p&gt;
+    &lt;a href="#main"&gt;Наверх ↑&lt;/a&gt;
+  &lt;/footer&gt;
+  &lt;script src="js/theme.js" defer&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<pre><code>// site/js/theme.js — готовый: переключает data-theme на &lt;html&gt; и запоминает выбор
+const root = document.documentElement;
+const saved = localStorage.getItem('theme');
+if (saved) root.dataset.theme = saved;
+document.querySelector('.theme-toggle')?.addEventListener('click', () =&gt; {
+  const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+  const current = root.dataset.theme ?? (dark ? 'dark' : 'light');
+  root.dataset.theme = current === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('theme', root.dataset.theme);
+});</code></pre>
+<pre><code># заглушки аватаров спикеров
+for i in 1 2 3 4 5 6; do cat &gt; site/img/speaker-$i.svg &lt;&lt;EOF
+&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"&gt;&lt;rect width="160" height="160" fill="hsl($((i*55)) 55% 72%)"/&gt;&lt;circle cx="80" cy="64" r="30" fill="#fff" opacity=".85"/&gt;&lt;rect x="36" y="104" width="88" height="70" rx="34" fill="#fff" opacity=".85"/&gt;&lt;/svg&gt;
+EOF
+done</code></pre>
+<pre><code>/* site/css/main.css — точка входа; пока без слоёв (их добавим в 1.3) */
+@import url('reset.css');
+@import url('base.css');
+@import url('components.css');</code></pre>
+<pre><code>touch site/css/reset.css site/css/base.css site/css/components.css
+docker compose up -d
+curl -s -o /dev/null -w "%{http_code}\n" localhost:8080/</code></pre>
+<div class="why"><b>Зачем:</b> nginx раздаёт папку <code>site</code> как есть, без сборки. <code>Cache-Control: no-store</code> избавляет от вечного «почему не применилось» из-за кеша. Разметка семантическая: <code>header</code>, <code>nav</code> с <code>aria-label</code>, <code>main</code>, <code>section</code>, <code>article</code>, <code>details</code>, кнопка с <code>popovertarget</code>. Хорошие стили опираются на хорошую разметку, и в этой лабе её не трогаем. <code>role="list"</code> у списка спикеров — известный приём: Safari убирает семантику списка, если снять маркеры через CSS. В разметку специально заложены трудности: слово-монстр в пятой карточке, бейдж только у одного тарифа, popover — всё это понадобится в сессиях 3–6.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p><code>200</code>. На <code>localhost:8080</code> — страница со стилями браузера по умолчанию: Times, синие ссылки, маркеры списков, огромные аватары, слово-монстр вылезает за край. Это и есть отправная точка.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Откройте DevTools → Elements, выберите <code>h1</code> и посмотрите Styles. Откуда берутся <code>margin</code> и <code>font-size</code>, если вы ещё не написали ни строчки CSS? Как называется этот источник стилей?</li><li>Выберите пятую карточку спикера: почему слово вылезает за пределы экрана, а не переносится?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-1-2"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-1-2"></label><span class="num">Шаг 1.2</span>Reset и базовая типографика: rem, line-height, длина строки, изображения<a class="anchor" href="#step-1-2">#</a></span><div class="step-body">
+<pre><code>/* site/css/reset.css — современный минимальный reset */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { -webkit-text-size-adjust: none; text-size-adjust: none; }
+body { min-block-size: 100dvh; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+img, picture, svg, video, canvas { display: block; max-inline-size: 100%; block-size: auto; }
+input, button, textarea, select { font: inherit; color: inherit; }
+p, h1, h2, h3, h4 { overflow-wrap: break-word; }
+:where(ul, ol)[role="list"] { list-style: none; padding: 0; }</code></pre>
+<pre><code>/* site/css/base.css — стили элементов (пока с «магическими» значениями, в 2.1 заменим токенами) */
+html { font-size: 100%; }                            /* уважаем настройку шрифта в браузере */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: #1f1a26;
+  background: #fbfaff;
+}
+h1, h2, h3 { line-height: 1.15; font-weight: 700; }
+h1 { font-size: 2.75rem; letter-spacing: -0.02em; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.25rem; }
+p, li { max-inline-size: 65ch; }                     /* комфортная длина строки */
+a { color: #6a35b8; text-underline-offset: 0.2em; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid #6a35b8; outline-offset: 3px; }</code></pre>
+<p>Поэкспериментируйте: в настройках браузера смените размер шрифта по умолчанию на «Очень крупный» и обновите страницу. Потом временно замените <code>font-size: 1.0625rem</code> на <code>17px</code> и повторите.</p>
+<div class="why"><b>Зачем:</b> reset убирает различия браузеров и неудобные умолчания. <code>box-sizing: border-box</code> для всех — чтобы ширина включала padding и border. Картинки становятся блочными и не шире контейнера (аватары перестают ломать страницу). Формы наследуют шрифт. Размеры шрифтов в <code>rem</code>: пользователь, увеличивший шрифт в настройках (частая настройка у людей со слабым зрением), получит увеличенный сайт; <code>px</code> эту настройку игнорирует. <code>line-height</code> без единиц — множитель от размера шрифта, наследуется корректно. <code>max-inline-size: 65ch</code> держит строку около 60–75 символов — дальше глазу трудно найти начало следующей строки. <code>:focus-visible</code> показывает обводку при навигации с клавиатуры, но не при клике мышью.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>Системный шрифт, крупный плотный заголовок, абзацы не растягиваются на весь широкий экран. Аватары по 160 пикселей. Маркеры у списка спикеров исчезли (<code>role="list"</code>), у списков тарифов остались. При «Очень крупном» шрифте в браузере текст с <code>rem</code> вырос, а с <code>17px</code> — нет. Табуляция клавишей Tab показывает фиолетовую обводку на ссылках.</p></div>
+<details class="deep"><summary>🔬 Под капотом: свой шрифт без прыжков раскладки</summary><div class="deep-body">
+<p>Если подключать веб-шрифт через <code>@font-face</code>, пока он грузится, текст рисуется запасным шрифтом, а потом «прыгает» — это и есть часть CLS из доклада Дмитрия. <code>font-display: swap</code> сразу показывает запасной шрифт, а дескрипторы <code>size-adjust</code>, <code>ascent-override</code>, <code>descent-override</code> в отдельном <code>@font-face</code> для запасного шрифта подгоняют его метрики под основной, и прыжок почти исчезает. В лабе используется системный шрифт: быстрее всего, ничего не грузится.</p>
+</div></details>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Откройте Computed у абзаца в hero. Какое итоговое значение <code>line-height</code> в пикселях и откуда оно пришло (наследование или своё правило)?</li><li>Почему в reset <code>:where(ul, ol)[role="list"]</code>, а не просто <code>ul[role="list"]</code>? Вернитесь к ответу после 1.3.</li><li>Что изменится, если <code>line-height: 1.6</code> заменить на <code>line-height: 1.6em</code> у <code>body</code>? Посмотрите на <code>h1</code>.</li></ul></div>
+</div></div>
+
+<div class="step" id="step-1-3"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-1-3"></label><span class="num">Шаг 1.3</span>Каскад: ломаем «чужим» CSS и войной !important, чиним каскадными слоями и :where()<a class="anchor" href="#step-1-3">#</a></span><div class="step-body">
+<p>В реальных проектах всегда есть «чужой» CSS: виджет, старая тема, библиотека. Симулируем его:</p>
+<pre><code>/* site/css/vendor-widget.css — «чужой» CSS, который нельзя редактировать */
+#main .speaker-list li h3 { color: crimson; font-family: Georgia, serif; }
+#main .section a.btn { background: gray !important; color: white; }
+body .btn { padding: 2px 6px; }</code></pre>
+<pre><code>/* site/css/components.css — ваши компоненты */
+.btn {
+  display: inline-block;
+  padding: 0.75em 1.25em;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+  background: #6a35b8;
+  color: white;
+}
+.btn-ghost { background: transparent; color: #6a35b8; box-shadow: inset 0 0 0 2px currentColor; }
+.speaker-card h3 { color: #1f1a26; font-family: inherit; }</code></pre>
+<pre><code>/* site/css/main.css — ❌ сначала так */
+@import url('reset.css');
+@import url('vendor-widget.css');
+@import url('base.css');
+@import url('components.css');</code></pre>
+<p>Посмотрите на заголовки спикеров и кнопки. Попробуйте «победить» vendor, не трогая его файл, так, как это обычно делают: сначала селектором посильнее (<code>#main .speaker-list .speaker-card h3</code>), потом <code>!important</code>. Для кнопок <code>!important</code> в vendor уже стоит — попробуйте перебить и его. Потом откатите свои правки и почините слоями:</p>
+<pre><code>/* site/css/main.css — ✅ порядок слоёв объявлен один раз, первой строкой */
+@layer reset, vendor, tokens, base, layout, components, utilities;
+
+@import url('reset.css') layer(reset);
+@import url('vendor-widget.css') layer(vendor);
+@import url('tokens.css') layer(tokens);
+@import url('base.css') layer(base);
+@import url('layout.css') layer(layout);
+@import url('components.css') layer(components);
+@import url('utilities.css') layer(utilities);</code></pre>
+<pre><code>touch site/css/tokens.css site/css/layout.css site/css/utilities.css</code></pre>
+<pre><code>/* site/css/utilities.css — утилиты с «всегда»-смыслом */
+.visually-hidden {
+  position: absolute !important; inline-size: 1px !important; block-size: 1px !important;
+  overflow: hidden !important; clip-path: inset(50%) !important; white-space: nowrap !important;
+}</code></pre>
+<div class="why"><b>Зачем:</b> без слоёв правило vendor <code>#main .speaker-list li h3</code> со специфичностью (1,1,2) побеждает ваше <code>.speaker-card h3</code> (0,1,1). Один id перевешивает любое количество классов, и начинается гонка: длиннее селектор, потом <code>!important</code>, потом <code>!important</code> длиннее. Каскадные слои проверяются <b>до</b> специфичности (раздел 3). <code>components</code> объявлен позже <code>vendor</code>, поэтому ваш простой селектор побеждает, как бы ни был силён чужой. С <code>!important</code> хитрее: у важных объявлений порядок слоёв переворачивается, и важное в <code>vendor</code> побеждает ваше обычное. Обычными объявлениями его не победить ни в каком слое — это разбирается в «проверь себя». Порядок слоёв объявлен одной строкой в начале: так он виден сразу и не зависит от порядка импортов.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>Без слоёв: заголовки спикеров красные с засечками, кнопки серые с маленьким padding. Ваш <code>!important</code> для кнопок проигрывает vendor-овскому (у того выше специфичность). Со слоями: заголовки нормальные, padding кнопок ваш. Фон кнопок в hero по-прежнему серый — это <code>!important</code> из vendor. В DevTools → Styles правила сгруппированы по слоям с подписью <code>@layer vendor</code>, <code>@layer components</code>, проигравшие перечёркнуты.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Можно ли победить серый фон кнопок, не трогая vendor и без <code>!important</code> в своём коде? Объясните, почему нет. Какое минимальное решение остаётся (подсказка: важное объявление в слое, объявленном <b>раньше</b> <code>vendor</code>) и почему честнее всё-таки убрать это правило из чужого файла или обернуть виджет?</li><li>Добавьте в конец <code>main.css</code> правило вне слоёв: <code>h3 { color: orange }</code>. Кто победит <code>.speaker-card h3</code> из слоя <code>components</code> и почему?</li><li>Вернитесь к reset из 1.2: зачем <code>:where()</code>, если reset теперь в самом слабом слое?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-1-4"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-1-4"></label><span class="num">Шаг 1.4</span>Box model: ломаем схлопыванием margin, чиним padding, flow-root и gap; логические свойства<a class="anchor" href="#step-1-4">#</a></span><div class="step-body">
+<pre><code>/* site/css/layout.css */
+.hero {
+  background: #efe6fb;
+  /* padding пока нет — намеренно */
+}
+.hero h1 { margin-block-start: 3rem; }
+.hero .lead { margin-block: 1rem 2rem; }
+.section { margin-block: 4rem; }
+.section &gt; h2 { margin-block-end: 1.5rem; }</code></pre>
+<p>Посмотрите на верх страницы: где начинается фиолетовый фон hero относительно заголовка? Наведите курсор на <code>.hero</code> в Elements и посмотрите на подсветку margin. Затем почините тремя способами по очереди:</p>
+<pre><code>/* способ 1: padding у родителя — margin ребёнка больше не проваливается наружу */
+.hero { padding-block: 1px; }
+
+/* способ 2: новый контекст форматирования */
+.hero { display: flow-root; }
+
+/* способ 3 (итоговый): отступы задаёт родитель через padding и gap, дети без внешних margin */
+.hero {
+  display: grid;
+  gap: 1.25rem;
+  padding-block: clamp(3rem, 8vw, 6rem);
+  padding-inline: 1.5rem;
+  background: #efe6fb;
+}
+.hero h1 { margin: 0; }
+.hero .lead { margin: 0; }</code></pre>
+<p>Добавьте в <span class="file">utilities.css</span> «поточную» утилиту для текста — альтернативу margin у каждого элемента:</p>
+<pre><code>/* отступ между соседями в потоке, а не у каждого элемента */
+.flow &gt; * + * { margin-block-start: var(--flow-space, 1em); }</code></pre>
+<p>Проверка логических свойств: временно поставьте <code>&lt;html lang="ru" dir="rtl"&gt;</code> в DevTools (двойной клик по атрибуту) и посмотрите на hero и шапку. Верните <code>dir</code>.</p>
+<div class="why"><b>Зачем:</b> <code>margin-block-start</code> у <code>h1</code> — первого ребёнка <code>.hero</code> без padding и border — схлопывается с margin самой секции и «проваливается» наружу. Получается отступ <i>над</i> фиолетовым фоном вместо отступа внутри. Классический баг «откуда этот белый промежуток». Padding или border разрывают схлопывание, <code>flow-root</code> создаёт новый контекст форматирования, а у grid- и flex-контейнеров схлопывания нет вообще. Итоговый способ — самый устойчивый: расстояния между детьми задаёт родитель (<code>gap</code>), внешние отступы — padding контейнера, у детей нет margin, и схлопываться нечему. Логические свойства (<code>margin-block</code>, <code>padding-inline</code>) описывают направление потока, а не стороны экрана, и для RTL-интерфейса работают без переписывания.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>До починки: над фиолетовым блоком белая полоса 3rem, заголовок прижат к верхнему краю фона. DevTools подсвечивает margin <code>h1</code> снаружи <code>.hero</code>. После: фон начинается сразу под шапкой, заголовок с отступом внутри. С <code>dir="rtl"</code> текст hero выровнен по правому краю, отступы на месте.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Между секциями <code>margin-block: 4rem</code>. Какое расстояние между соседними секциями — 4rem или 8rem? Проверьте в DevTools и объясните.</li><li>Почему способ 1 (<code>padding-block: 1px</code>) — хак, а не решение?</li><li>В каких трёх ситуациях схлопывания margin не бывает?</li></ul></div>
+</div></div>
+
+<div class="next-box"><span class="tag">ИТОГ СЕССИИ 1 → ПЕРЕД СЕССИЕЙ 2</span><ul>
+<li>✅ <code>git add -A &amp;&amp; git commit -m "session 1: reset, typography, cascade layers, box model"</code></li>
+<li>📝 Ответы 1.1–1.4 в <span class="file">docs/css-notes.md</span>.</li>
+<li>📖 <a href="https://utopia.fyi/type/calculator" target="_blank">Utopia: fluid type scale</a> — посмотреть, как строится шкала на <code>clamp()</code>; <a href="https://oklch.com" target="_blank">oklch.com</a> — поиграть с палитрой, 15 минут.</li>
+</ul></div>
+
+<div class="session-banner" id="session-2">Сессия <a href="#session-2" style="color:#fff;text-decoration:none">2</a> — Токены, цвет, темы, текст: дизайн-система на переменных <span>~3,5 часа</span></div>
+
+<div class="step" id="step-2-1"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-2-1"></label><span class="num">Шаг 2.1</span>Токены: шкала отступов и резиновая шкала шрифтов на clamp(), замена магических чисел<a class="anchor" href="#step-2-1">#</a></span><div class="step-body">
+<pre><code>/* site/css/tokens.css — @layer tokens (подключён в main.css) */
+:root {
+  /* отступы: одна шкала на всё — никаких 37px */
+  --space-1: 0.25rem;  --space-2: 0.5rem;  --space-3: 0.75rem; --space-4: 1rem;
+  --space-5: 1.5rem;   --space-6: 2rem;    --space-7: 3rem;    --space-8: 4.5rem;
+  --space-section: clamp(var(--space-7), 6vw, 6rem);        /* резиновый отступ между секциями */
+
+  /* шрифты: резиновая шкала — растёт с шириной окна в заданных пределах */
+  --step--1: clamp(0.875rem, 0.85rem + 0.1vw, 0.94rem);
+  --step-0:  clamp(1rem,     0.95rem + 0.25vw, 1.125rem);
+  --step-1:  clamp(1.2rem,   1.1rem + 0.5vw,   1.45rem);
+  --step-2:  clamp(1.5rem,   1.3rem + 1vw,     2rem);
+  --step-3:  clamp(1.9rem,   1.5rem + 2vw,     3rem);
+  --step-4:  clamp(2.3rem,   1.7rem + 3vw,     4rem);
+
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --leading-tight: 1.15;
+  --leading-normal: 1.6;
+
+  --radius-s: 0.5rem; --radius-m: 0.75rem; --radius-l: 1.25rem; --radius-pill: 999px;
+  --shadow-1: 0 1px 2px oklch(0% 0 0 / 0.06), 0 2px 8px oklch(0% 0 0 / 0.06);
+  --shadow-2: 0 4px 12px oklch(0% 0 0 / 0.08), 0 12px 32px oklch(0% 0 0 / 0.08);
+  --content-max: 72rem;
+}</code></pre>
+<pre><code>/* site/css/base.css — теперь на токенах */
+body {
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  line-height: var(--leading-normal);
+  color: #1f1a26;                         /* цвета — в 2.2 */
+  background: #fbfaff;
+}
+h1, h2, h3 { line-height: var(--leading-tight); font-weight: 700; }
+h1 { font-size: var(--step-4); letter-spacing: -0.02em; }
+h2 { font-size: var(--step-3); letter-spacing: -0.01em; }
+h3 { font-size: var(--step-1); }
+small, .eyebrow, .role { font-size: var(--step--1); }</code></pre>
+<pre><code>/* site/css/layout.css — секции и hero на токенах */
+.hero {
+  display: grid;
+  gap: var(--space-5);
+  padding-block: var(--space-section);
+  padding-inline: var(--space-5);
+  background: #efe6fb;
+}
+.hero :is(h1, .lead) { margin: 0; }
+.section { margin-block: var(--space-section); padding-inline: var(--space-5); }
+.section &gt; h2 { margin-block-end: var(--space-5); }</code></pre>
+<pre><code>/* site/css/components.css — кнопка на токенах; em для внутренних отступов — растут с размером текста кнопки */
+.btn {
+  display: inline-block;
+  padding: 0.75em 1.4em;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  text-decoration: none;
+  background: #6a35b8;
+  color: white;
+}
+.btn-large { font-size: var(--step-1); }        /* padding вырос сам — он в em */</code></pre>
+<p>Потяните окно браузера от узкого к широкому и посмотрите на заголовок hero. В DevTools выберите <code>h1</code>, в Computed найдите <code>font-size</code>, меняйте ширину окна.</p>
+<div class="why"><b>Зачем:</b> токены — именованные решения дизайна. <code>--space-5</code> вместо <code>1.5rem</code>, разбросанного по двадцати местам, — одно место для изменения и ограниченный набор значений, благодаря которому интерфейс выглядит собранным. Резиновая шкала: <code>clamp(min, preferred, max)</code> с <code>vw</code> в середине плавно растит шрифт между двумя ширинами окна без медиазапросов, а <code>rem</code> в формуле сохраняет реакцию на пользовательский размер шрифта. Токены лежат в отдельном слое <code>tokens</code> и объявлены на <code>:root</code>, поэтому доступны всем. Эти же имена — <code>--spacing</code>, <code>--text-*</code>, <code>--radius-*</code> — вы увидите в <code>@theme</code> Tailwind v4: это одна и та же идея.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p><code>font-size</code> заголовка hero плавно меняется примерно от 37 до 64 пикселей при ширине окна от ~400 до ~1500 пикселей и дальше не растёт. Отступы секций тоже резиновые. В Computed у <code>h1</code> видно итоговое значение, а в Styles — цепочка <code>var(--step-4)</code> → <code>clamp(...)</code>.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Уберите <code>1.7rem +</code> из <code>--step-4</code>, оставив <code>clamp(2.3rem, 3vw, 4rem)</code>. Увеличьте в браузере масштаб текста (не страницы). Что изменилось и почему это проблема доступности?</li><li>Задайте <code>--space-section: var(--space-8)</code> только внутри <code>#faq</code>. Почему это работает, и чем custom properties здесь отличаются от переменных Sass?</li><li>Найдите в своём CSS оставшиеся «магические» числа. Какие стоит сделать токенами, а какие — нет?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-2-2"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-2-2"></label><span class="num">Шаг 2.2</span>Цвет: палитра в oklch, производные через color-mix и относительный синтаксис, контраст<a class="anchor" href="#step-2-2">#</a></span><div class="step-body">
+<p>Сначала посмотрите, почему не HSL. Временно вставьте в <span class="file">index.html</span> перед <code>&lt;main&gt;</code> (и уберите после):</p>
+<pre><code>&lt;div style="display:flex"&gt;
+  &lt;div style="flex:1;padding:1rem;background:hsl(60 100% 50%)"&gt;HSL 50%&lt;/div&gt;
+  &lt;div style="flex:1;padding:1rem;background:hsl(240 100% 50%);color:white"&gt;HSL 50%&lt;/div&gt;
+  &lt;div style="flex:1;padding:1rem;background:oklch(70% 0.15 100)"&gt;OKLCH 70%&lt;/div&gt;
+  &lt;div style="flex:1;padding:1rem;background:oklch(70% 0.15 265)"&gt;OKLCH 70%&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<pre><code>/* site/css/tokens.css — палитра (пока только светлая; тёмная в 2.3) */
+:root {
+  --hue: 295;                                                    /* фирменный оттенок — одно число */
+  --brand:        oklch(52% 0.2 var(--hue));
+  --brand-hover:  color-mix(in oklch, var(--brand), black 18%);
+  --brand-soft:   oklch(from var(--brand) 94% 0.04 h);           /* та же H, светлее и бледнее */
+  --brand-text:   oklch(99% 0 0);                                 /* текст на brand */
+
+  --bg:           oklch(98.5% 0.005 var(--hue));
+  --surface:      oklch(100% 0 0);
+  --text:         oklch(22% 0.02 var(--hue));
+  --text-muted:   oklch(45% 0.02 var(--hue));
+  --border:       oklch(90% 0.01 var(--hue));
+  --danger:       oklch(55% 0.2 25);
+  --success:      oklch(58% 0.15 150);
+}</code></pre>
+<pre><code>/* base.css и components.css — все цвета через токены */
+body { color: var(--text); background: var(--bg); }
+a { color: var(--brand); }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+
+.btn { background: var(--brand); color: var(--brand-text); transition: background-color 0.15s; }
+.btn:hover { background: var(--brand-hover); }
+.btn-ghost { background: transparent; color: var(--brand); box-shadow: inset 0 0 0 2px currentColor; }
+.btn-ghost:hover { background: var(--brand-soft); }
+
+/* layout.css */
+.hero { background: var(--brand-soft); }</code></pre>
+<p>Смените <code>--hue</code> на <code>160</code>, затем на <code>25</code> и посмотрите на страницу. Верните <code>295</code>. Затем проверьте контраст: DevTools → выберите текст <code>.role</code> (приглушённый) → в Styles кликните по квадратику цвета.</p>
+<div class="why"><b>Зачем:</b> в HSL жёлтый и синий с «lightness 50%» выглядят противоположно по яркости; в oklch одинаковое L — одинаковая воспринимаемая светлота. Поэтому, меняя только <code>--hue</code>, вы получаете новую палитру с тем же контрастом, без ручной подгонки. Производные цвета вычисляются от базового. <code>color-mix(in oklch, …, black 18%)</code> — затемнение для hover. Относительный синтаксис <code>oklch(from var(--brand) 94% 0.04 h)</code> берёт оттенок базового цвета и задаёт свои L и C. Сменили бренд — вся палитра пересчиталась. Контраст текста к фону должен быть не ниже 4.5:1 для обычного текста (WCAG AA); DevTools показывает его прямо в палитре.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>Две HSL-плашки явно разной яркости, две OKLCH — одинаковой. С <code>--hue: 160</code> сайт зелёный, с <code>25</code> — красно-оранжевый, светлота кнопок и фона hero не меняется. У <code>.role</code> DevTools показывает контраст около 7:1 и галочки AA/AAA.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Почему <code>color-mix</code> делается <code>in oklch</code>, а не <code>in srgb</code>? Сравните затемнение жёлтого в обоих пространствах.</li><li>Сделайте <code>.plan-featured</code> другим оттенком, переопределив в нём только <code>--hue</code>. Какие цвета поменялись, а какие нет, и почему? (Подсказка: где вычисляется <code>var()</code> внутри <code>--brand</code>.)</li><li>Какой минимальный контраст нужен для крупного текста и для иконок-кнопок?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-2-3"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-2-3"></label><span class="num">Шаг 2.3</span>Тёмная тема: light-dark() + color-scheme, ручной переключатель; ломаем забытым жёстким цветом<a class="anchor" href="#step-2-3">#</a></span><div class="step-body">
+<pre><code>/* site/css/tokens.css — палитра для обеих тем: второе значение — тёмная */
+:root {
+  color-scheme: light dark;                                       /* по умолчанию — как в системе */
+
+  --brand:       light-dark(oklch(52% 0.2 var(--hue)),  oklch(72% 0.16 var(--hue)));
+  --brand-hover: color-mix(in oklch, var(--brand), light-dark(black, white) 18%);
+  --brand-soft:  light-dark(oklch(94% 0.04 var(--hue)), oklch(28% 0.06 var(--hue)));
+  --brand-text:  light-dark(oklch(99% 0 0),             oklch(18% 0.03 var(--hue)));
+
+  --bg:          light-dark(oklch(98.5% 0.005 var(--hue)), oklch(17% 0.015 var(--hue)));
+  --surface:     light-dark(oklch(100% 0 0),              oklch(22% 0.02 var(--hue)));
+  --text:        light-dark(oklch(22% 0.02 var(--hue)),   oklch(93% 0.01 var(--hue)));
+  --text-muted:  light-dark(oklch(45% 0.02 var(--hue)),   oklch(72% 0.02 var(--hue)));
+  --border:      light-dark(oklch(90% 0.01 var(--hue)),   oklch(32% 0.02 var(--hue)));
+}
+:root[data-theme="light"] { color-scheme: light; }                /* ручной выбор побеждает систему */
+:root[data-theme="dark"]  { color-scheme: dark; }</code></pre>
+<p>Теперь <b>сломаем</b>: добавьте в <span class="file">components.css</span> карточку с жёстко заданными цветами, как их часто пишут:</p>
+<pre><code>/* ❌ жёсткие цвета */
+.speaker-card { background: white; border: 1px solid #e6e1ee; border-radius: var(--radius-l); padding: var(--space-4); }
+.speaker-card .role { color: #6b6475; }</code></pre>
+<p>Переключите тему кнопкой ◐ и посмотрите на карточки спикеров. Затем замените цвета токенами:</p>
+<pre><code>/* ✅ */
+.speaker-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-l); padding: var(--space-4); }
+.speaker-card .role { color: var(--text-muted); }</code></pre>
+<p>Проверьте системную тему: DevTools → ⋮ → More tools → Rendering → «Emulate CSS media feature prefers-color-scheme: dark». Удалите <code>theme</code> из localStorage (Application → Local Storage), чтобы работала системная.</p>
+<div class="why"><b>Зачем:</b> <code>light-dark(a, b)</code> возвращает значение в зависимости от вычисленного <code>color-scheme</code> элемента. По умолчанию <code>light dark</code> означает «как в ОС». Кнопка ◐ ставит <code>data-theme</code>, а он меняет <b>одно свойство</b> <code>color-scheme</code> — и все токены переключаются, без второй копии стилей. <code>color-scheme</code> заодно перекрашивает то, что рисует браузер: полосы прокрутки, поля ввода, чекбоксы, <code>&lt;details&gt;</code>. Тёмная палитра — не инверсия: в тёмной теме бренд светлее (L 72% вместо 52%), иначе он тонет в тёмном фоне, а текст на кнопке становится тёмным. Жёсткие цвета — главный враг тем: они не участвуют в переключении, и их легко пропустить. Правило лабы: в компонентах только токены.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>Сломанная версия: в тёмной теме фон страницы тёмный, а карточки спикеров — белые пятна с серым текстом. После замены карточки темнее фона, рамки еле видны, приглушённый текст читаем. Кнопки — светло-фиолетовые с тёмным текстом. При эмуляции <code>prefers-color-scheme: dark</code> без сохранённого выбора сайт тёмный сразу. Выбор кнопкой переживает F5.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>При загрузке тёмной темы из localStorage страница на мгновение может мигнуть светлой. Почему? Где должен выполняться скрипт, чтобы этого не было? (Подсказка: <code>defer</code> и место тега <code>&lt;script&gt;</code>.)</li><li>Как сделать одну секцию всегда тёмной независимо от темы сайта одной строкой CSS?</li><li>Найдите в DevTools (Elements → поиск <code>#</code> в Styles) оставшиеся жёсткие цвета. Почему <code>oklch(0% 0 0 / 0.06)</code> в тенях можно не делать токеном?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-2-4"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-2-4"></label><span class="num">Шаг 2.4</span>Текст: ломаем словом-монстром; text-wrap, переносы, обрезка строк<a class="anchor" href="#step-2-4">#</a></span><div class="step-body">
+<p>Сломанное состояние уже есть: пятая карточка спикера со словом без пробелов. Сузьте окно до ~400 пикселей.</p>
+<pre><code>/* base.css — перенос и баланс */
+h1, h2, h3 { text-wrap: balance; }                  /* строки заголовка примерно равной длины */
+p, li { text-wrap: pretty; }                        /* без одинокого слова в последней строке (прогрессивно) */
+.talk { overflow-wrap: anywhere; hyphens: auto; }   /* рвать длинное слово где угодно; переносы по словарю lang="ru" */</code></pre>
+<pre><code>/* components.css — обрезка: должность в одну строку с многоточием, тема доклада — не больше трёх строк */
+.speaker-card .role {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.speaker-card .talk {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}</code></pre>
+<div class="why"><b>Зачем:</b> <code>overflow-wrap: break-word</code> из reset рвёт длинное слово, только если оно не помещается в строку само по себе, но <b>не уменьшает</b> минимальный размер элемента. <code>anywhere</code> позволяет рвать слово и учитывается при расчёте минимальной ширины, поэтому flex- и grid-элементы с таким текстом могут сжиматься (это понадобится в 3.2). <code>hyphens: auto</code> ставит переносы по словарю языка из <code>lang</code>. <code>text-wrap: balance</code> выравнивает длину строк коротких заголовков, <code>pretty</code> убирает «висячие» слова в абзацах; где не поддерживается, просто игнорируется. Многоточие в одну строку требует трёх свойств вместе. Многострочная обрезка до сих пор делается через <code>-webkit-line-clamp</code> — нестандартное, но поддерживаемое везде свойство. Помните, что обрезанный текст должен быть доступен целиком где-то ещё.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>Слово-монстр больше не вылезает за край карточки: переносится внутри неё. Заголовок hero на широком экране разбит на две строки примерно равной длины вместо длинной первой и короткой второй. Длинная должность обрезана многоточием, тема доклада — не больше трёх строк.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Замените <code>anywhere</code> на <code>break-word</code> и посмотрите на карточку при узком окне. В чём разница? Вернитесь к этому вопросу в 3.2.</li><li>Почему <code>text-wrap: balance</code> не стоит ставить на длинные абзацы? (Подсказка: ограничение по числу строк и производительность.)</li><li>Как сделать, чтобы обрезанная тема доклада была доступна полностью, не меняя разметку?</li></ul></div>
+</div></div>
+
+<div class="next-box"><span class="tag">ИТОГ СЕССИИ 2 → ПЕРЕД СЕССИЕЙ 3</span><ul>
+<li>✅ <code>git add -A &amp;&amp; git commit -m "session 2: tokens, oklch palette, themes, text"</code></li>
+<li>📝 Ответы 2.1–2.4.</li>
+<li>📖 <a href="https://developer.mozilla.org/ru/docs/Learn_web_development/Core/CSS_layout/Flexbox" target="_blank">MDN: Flexbox</a> — 20 минут.</li>
+</ul></div>
+
+<div class="session-banner" id="session-3">Сессия <a href="#session-3" style="color:#fff;text-decoration:none">3</a> — Flexbox: шапка, медиа-объект, карточки тарифов <span>~3 часа</span></div>
+
+<div class="step" id="step-3-1"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-3-1"></label><span class="num">Шаг 3.1</span>Шапка и подвал на flex: оси, gap, выравнивание, «оттолкнуть» через margin auto<a class="anchor" href="#step-3-1">#</a></span><div class="step-body">
+<pre><code>/* site/css/layout.css */
+.site-header {
+  display: flex;
+  align-items: center;               /* поперечная ось: по центру по вертикали */
+  gap: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  border-block-end: 1px solid var(--border);
+  background: var(--surface);
+}
+.site-nav { display: flex; gap: var(--space-4); }
+.theme-toggle { margin-inline-start: auto; }  /* забирает всё свободное место слева — кнопка уезжает вправо */
+
+.site-footer {
+  display: flex;
+  justify-content: space-between;    /* главная ось: по краям */
+  align-items: baseline;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-5);
+  border-block-start: 1px solid var(--border);
+  color: var(--text-muted);
+}</code></pre>
+<pre><code>/* site/css/components.css */
+.logo { font-weight: 800; font-size: var(--step-1); color: var(--text); text-decoration: none; }
+.logo span { color: var(--brand); }
+.site-nav a { color: var(--text-muted); text-decoration: none; padding-block: var(--space-1); }
+.site-nav a:hover { color: var(--text); }
+.site-nav a[aria-current="page"] { color: var(--text); box-shadow: inset 0 -2px 0 var(--brand); }
+.theme-toggle {
+  inline-size: 2.5rem; aspect-ratio: 1;
+  display: grid; place-items: center;      /* самый короткий способ центрировать */
+  border: 1px solid var(--border); border-radius: var(--radius-pill);
+  background: transparent; cursor: pointer;
+}
+.hero .actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }</code></pre>
+<p>Откройте DevTools → Elements, у <code>.site-header</code> появится значок <code>flex</code> — кликните по нему. Поменяйте в Styles <code>align-items</code> на <code>stretch</code>, <code>flex-start</code>, <code>baseline</code>.</p>
+<div class="why"><b>Зачем:</b> у flex-контейнера две оси. <b>Главная</b> (по умолчанию горизонтальная, <code>flex-direction: row</code>) — вдоль неё работают <code>justify-content</code> и распределение места. <b>Поперечная</b> — там <code>align-items</code>. <code>gap</code> задаёт расстояния между элементами без margin у детей и без проблем «лишнего отступа у последнего». <code>margin-inline-start: auto</code> у одного элемента забирает всё свободное место перед ним — так кнопка темы уезжает вправо, а логотип и навигация остаются слева; <code>justify-content</code> так не умеет. Активный пункт навигации стилизуется по <code>aria-current</code>, а не по отдельному классу: стиль привязан к семантике, и доступность с видом не расходятся. <code>display: grid; place-items: center</code> — самый короткий способ центрировать содержимое в квадратной кнопке.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>Шапка в одну строку: «FrontFest» (Fest фиолетовым), три пункта навигации, «Главная» подчёркнута, круглая кнопка ◐ у правого края. В подвале копирайт слева, «Наверх ↑» справа. Кнопки hero в ряд с промежутком, на узком экране переносятся. Оверлей flex в DevTools показывает свободное место перед кнопкой темы.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Сузьте окно до 360 пикселей. Что происходит с шапкой? Почему элементы не переносятся сами? (Починим в 5.1.)</li><li>Замените <code>margin-inline-start: auto</code> на <code>justify-content: space-between</code> у шапки. Где теперь навигация? Почему?</li><li>Что изменит <code>align-items: baseline</code> в подвале, если у ссылки «Наверх» другой размер шрифта?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-3-2"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-3-2"></label><span class="num">Шаг 3.2</span>Медиа-объект на flex: grow/shrink/basis; ломаем многоточием, которое «не работает», чиним min-width: 0<a class="anchor" href="#step-3-2">#</a></span><div class="step-body">
+<pre><code>/* components.css — карточка спикера: картинка слева, текст справа */
+.speaker-card {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  /* background, border, radius, padding — из 2.3 */
+}
+.speaker-card img {
+  flex: 0 0 5rem;                    /* не растёт, не сжимается, базовый размер 5rem */
+  inline-size: 5rem;
+  aspect-ratio: 1;
+  border-radius: var(--radius-pill);
+  object-fit: cover;
+}
+.speaker-body { flex: 1; }           /* = 1 1 0%: забирает всё оставшееся место */
+.speaker-card h3 { margin-block-end: var(--space-1); }
+.speaker-card .talk { margin-block-start: var(--space-2); }</code></pre>
+<pre><code>/* layout.css — ВРЕМЕННО: узкая колонка, чтобы увидеть проблему */
+.speaker-list { max-inline-size: 22rem; display: grid; gap: var(--space-4); }</code></pre>
+<p>Посмотрите на вторую карточку (должность «Дизайн-инженер, «Маршрут»» и другие длинные): работает ли многоточие у <code>.role</code> из 2.4? Выходит ли карточка за пределы колонки? Выберите <code>.speaker-body</code> и посмотрите его ширину в DevTools. Затем почините:</p>
+<pre><code>.speaker-body { flex: 1; min-inline-size: 0; }   /* разрешить сжиматься меньше самого длинного неразрывного контента */</code></pre>
+<div class="why"><b>Зачем:</b> <code>flex: 0 0 5rem</code> — картинка фиксированного размера, которую flex никогда не сожмёт; без этого круглая аватарка сплющивается в овал, когда тексту не хватает места. <code>flex: 1</code> у текста — забрать всё, что осталось. А дальше главная ловушка Flexbox. У flex-элементов по умолчанию <code>min-width: auto</code>: элемент не сжимается меньше своего <b>минимального содержимого</b>. Для строки с <code>white-space: nowrap</code> это вся строка целиком. Поэтому <code>.speaker-body</code> распирает до длины должности, многоточию «негде» появиться, и карточка вылезает из колонки. <code>min-inline-size: 0</code> снимает это ограничение. Та же причина у «таблица внутри flex ломает раскладку» и «<code>pre</code> с кодом вылезает за экран» — одно из самых частых обращений к CSS в чатах поддержки.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>До починки: в узкой колонке многоточия нет, длинные должности выходят за правый край карточки, в DevTools <code>.speaker-body</code> шире доступного места. После: должности обрезаны многоточием внутри карточки, аватары остаются кругами. Удалите временное правило <code>.speaker-list</code> — сетку сделаем в 4.2.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Слово-монстр в пятой карточке не распирало её даже без <code>min-inline-size: 0</code>. Почему? (Вспомните <code>overflow-wrap: anywhere</code> из 2.4.)</li><li>Чем отличаются <code>flex: 1</code>, <code>flex: auto</code> и <code>flex: 1 1 auto</code>? Поставьте две карточки тарифа рядом с разными значениями и сравните.</li><li>Уберите у картинки <code>flex-shrink: 0</code> (поставьте <code>flex: 0 1 5rem</code>). Что происходит в узкой колонке?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-3-3"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-3-3"></label><span class="num">Шаг 3.3</span>Тарифы на flex: перенос, одинаковая высота, кнопка прижата вниз, свои маркеры списка<a class="anchor" href="#step-3-3">#</a></span><div class="step-body">
+<pre><code>/* layout.css — ряд карточек, который переносится сам */
+.pricing {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  align-items: stretch;               /* по умолчанию: карточки в ряду одной высоты */
+}
+.pricing &gt; .plan { flex: 1 1 16rem; } /* базовая ширина 16rem, растут поровну, переносятся, когда не влезают */</code></pre>
+<pre><code>/* components.css */
+.plan {
+  display: flex;
+  flex-direction: column;             /* главная ось — вертикальная */
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-l);
+}
+.plan-head { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.plan-head h3 { margin: 0; }
+.badge {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--brand-soft); color: var(--brand);
+  font-size: var(--step--1); font-weight: 600;
+}
+.price { font-size: var(--step-3); font-weight: 800; line-height: 1; }
+.features { padding: 0; list-style: none; display: grid; gap: var(--space-2); }
+.features li::before { content: "✓"; color: var(--success); font-weight: 700; margin-inline-end: var(--space-2); }
+.plan .btn { margin-block-start: auto; text-align: center; }   /* прижать кнопку к низу карточки */
+.plan-featured { border: 2px solid var(--brand); box-shadow: var(--shadow-2); }
+.link { background: none; border: 0; padding: 0; color: var(--brand); text-decoration: underline; cursor: pointer; }
+.pricing-note { margin-block-start: var(--space-4); color: var(--text-muted); }</code></pre>
+<p>Уберите на время <code>margin-block-start: auto</code> у кнопки и сравните карточки. Потом потяните окно: при какой ширине карточки переносятся и как ведёт себя последняя в ряду?</p>
+<div class="why"><b>Зачем:</b> <code>flex-wrap: wrap</code> + <code>flex: 1 1 16rem</code> дают адаптивный ряд без медиазапросов. Карточки стараются быть по 16rem, растягиваются, чтобы заполнить ряд, и переносятся, когда места меньше. <code>align-items: stretch</code> (значение по умолчанию) делает карточки в одном ряду одной высоты. Внутри карточка — flex-колонка, и <code>margin-block-start: auto</code> у кнопки забирает всё свободное место по вертикали: кнопки стоят по нижнему краю, даже если у тарифов разное число пунктов. Но заметьте, чего flex не умеет: цены и списки в соседних карточках <b>не выровнены</b> между собой (у «Стандарта» есть бейдж). Каждая карточка раскладывается сама по себе, это задача для subgrid в 4.4. <code>::before</code> с <code>content</code> рисует маркер без лишней разметки.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>Три карточки в ряд на широком экране, «Стандарт» выделен рамкой и тенью, у пунктов зелёные галочки, все «Выбрать» на одной линии внизу. Без <code>margin-block-start: auto</code> кнопки стоят сразу под списками на разной высоте. На средней ширине две карточки в первом ряду и одна во втором растянута на всю ширину. Цены в соседних карточках чуть на разной высоте из-за бейджа.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Последняя карточка во втором ряду растягивается на всю ширину. Как сделать, чтобы она была как остальные? Почему это трудно на flex и легко на grid?</li><li>Замените <code>content: "✓"</code> на <code>list-style-type: "✓ "</code> у <code>ul</code> и стилизуйте через <code>::marker</code>. Чем это лучше и какие свойства <code>::marker</code> не поддерживает?</li><li>Для скринридера галочка в <code>content</code> читается? Как сделать её декоративной? (Подсказка: альтернативный текст в <code>content: "✓" / ""</code>.)</li></ul></div>
+</div></div>
+
+<div class="next-box"><span class="tag">ИТОГ СЕССИИ 3 → ПЕРЕД СЕССИЕЙ 4</span><ul>
+<li>✅ <code>git add -A &amp;&amp; git commit -m "session 3: flexbox header, media object, pricing"</code></li>
+<li>📝 Ответы 3.1–3.3.</li>
+<li>📖 <a href="https://developer.mozilla.org/ru/docs/Learn_web_development/Core/CSS_layout/Grids" target="_blank">MDN: Grids</a> и <a href="https://www.joshwcomeau.com/css/full-bleed/" target="_blank">Full-bleed layout</a> — 25 минут.</li>
+</ul></div>
+
+<div class="session-banner" id="session-4">Сессия <a href="#session-4" style="color:#fff;text-decoration:none">4</a> — Grid: каркас, full-bleed, спикеры, таймлайн программы, subgrid <span>~3,5 часа</span></div>
+
+<div class="step" id="step-4-1"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-4-1"></label><span class="num">Шаг 4.1</span>Каркас на grid: прижатый подвал, full-bleed на именованных линиях, отступы через row-gap<a class="anchor" href="#step-4-1">#</a></span><div class="step-body">
+<pre><code>/* layout.css — body: шапка, контент, подвал; подвал всегда внизу, даже на короткой странице */
+body {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-block-size: 100dvh;
+}
+
+/* main: три колонки — поля, контент, поля; именованные линии full-* и content-* */
+main {
+  --gutter: var(--space-5);
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(var(--gutter), 1fr)
+    [content-start] min(100% - 2 * var(--gutter), var(--content-max))
+    [content-end] minmax(var(--gutter), 1fr)
+    [full-end];
+  row-gap: var(--space-section);             /* расстояние между секциями задаёт родитель */
+  padding-block-end: var(--space-section);
+}
+main &gt; * { grid-column: content; }
+main &gt; .full-bleed { grid-column: full; }     /* на всю ширину окна */
+
+/* hero на всю ширину, но его содержимое — по линиям контента: subgrid наследует колонки main */
+.hero {
+  display: grid;
+  grid-template-columns: subgrid;
+  row-gap: var(--space-5);
+  padding-block: var(--space-section);
+  background: var(--brand-soft);
+}
+.hero &gt; * { grid-column: content; }
+
+.section { margin: 0; padding: 0; }           /* отступы больше не нужны: их дают row-gap и колонки main */</code></pre>
+<p>Откройте DevTools → Layout, включите оверлей для <code>main</code> с подписями имён линий («Show line names»). Затем сравните фон hero и заголовок «Спикеры» при очень широком окне (сожмите масштаб страницы до 50%).</p>
+<div class="why"><b>Зачем:</b> <code>grid-template-rows: auto 1fr auto</code> у <code>body</code> — прижатый к низу подвал одной строкой: средняя строка забирает всё свободное место. Раньше это решали фиксированными высотами и отрицательными margin. Full-bleed на именованных линиях: у <code>main</code> три колонки, средняя не шире <code>--content-max</code>, и любой элемент решает, встать в <code>content</code> или в <code>full</code>. Так фон hero тянется на всю ширину окна, а текст выровнен с остальным контентом без обёрток-контейнеров. <code>subgrid</code> у hero передаёт ему колонки <code>main</code>, и дети hero встают по тем же линиям. <code>row-gap</code> вместо margin у секций: у grid-элементов margin не схлопываются, и два <code>margin-block</code> дали бы двойной отступ — тот же урок, что в 1.4.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>Фиолетовый фон hero от края до края окна, а заголовок hero, «Спикеры» и «Билеты» начинаются на одной вертикальной линии. На широком экране контент не шире ~72rem по центру, на узком — отступы 1.5rem по бокам. Оверлей показывает линии <code>full-start</code>, <code>content-start</code>, <code>content-end</code>, <code>full-end</code>. Если временно удалить почти всё содержимое <code>main</code> в DevTools, подвал всё равно прижат к низу окна.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Почему в <code>min(100% - 2 * var(--gutter), var(--content-max))</code> не нужен <code>calc()</code>?</li><li>Сделайте секцию вопросов «полуширокой» — шире контента на 4rem с каждой стороны — добавив ещё одну пару именованных линий. Как назовёте линии?</li><li>Что случится с hero, если убрать <code>grid-template-columns: subgrid</code>?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-4-2"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-4-2"></label><span class="num">Шаг 4.2</span>Сетка спикеров: repeat(auto-fill, minmax()) — ломаем горизонтальным скроллом, чиним min(); auto-fill против auto-fit<a class="anchor" href="#step-4-2">#</a></span><div class="step-body">
+<pre><code>/* layout.css — ❌ сначала так */
+.speaker-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: var(--space-5);
+}</code></pre>
+<p>Включите в DevTools режим устройства (Ctrl+Shift+M) и выберите ширину 320 пикселей. Прокрутите страницу по горизонтали. Затем почините:</p>
+<pre><code>.speaker-list { grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); }</code></pre>
+<p>Теперь auto-fill против auto-fit. Временно спрячьте часть спикеров и сравните два значения на широком экране:</p>
+<pre><code>.speaker:nth-child(n + 3) { display: none; }                             /* ВРЕМЕННО: оставить двоих */
+.speaker-list { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }   /* и auto-fill */</code></pre>
+<div class="why"><b>Зачем:</b> <code>repeat(auto-fill, minmax(18rem, 1fr))</code> — «столько колонок, сколько влезет, каждая от 18rem и поровну делят остаток». Это адаптивная сетка без единого медиазапроса. Ловушка: на экране уже 18rem (288px при 16px шрифте, минус отступы) минимальная колонка шире контейнера, и появляется горизонтальный скролл на всей странице. <code>min(100%, 18rem)</code> — «18rem, но не больше контейнера». Разница <code>auto-fill</code> и <code>auto-fit</code> видна, когда элементов меньше, чем влезает колонок. <code>auto-fill</code> оставляет пустые колонки-заготовки, и две карточки остаются узкими. <code>auto-fit</code> схлопывает пустые колонки, и две карточки растягиваются на всю ширину. Для каталогов обычно нужен <code>auto-fill</code>: карточка не должна раздуваться, если результат поиска один.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>До починки на 320 пикселях страница скроллится по горизонтали, карточки обрезаны справа. После — одна колонка, скролла нет. На широком экране — три колонки по ~20rem. С двумя спикерами: <code>auto-fill</code> — две узкие карточки и пустое место справа, <code>auto-fit</code> — две широкие на всю ширину. Удалите временное правило, оставьте <code>auto-fill</code>.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>В DevTools включите оверлей grid у <code>.speaker-list</code> при двух спикерах и <code>auto-fill</code>. Видны ли пустые колонки? Сколько их?</li><li>Как добиться «не больше трёх колонок» на очень широком экране, оставаясь без медиазапросов? (Подсказка: <code>max-inline-size</code> у сетки или <code>minmax(max(18rem, 100%/4), 1fr)</code>.)</li><li>Сравните с тарифами на flex из 3.3: как ведёт себя последний элемент в неполном ряду там и здесь?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-4-3"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-4-3"></label><span class="num">Шаг 4.3</span>Программа конференции: размещение по именованным линиям времени, области дорожек, неявная сетка<a class="anchor" href="#step-4-3">#</a></span><div class="step-body">
+<p>Разметка страницы программы. Время и дорожка каждого доклада заданы custom properties прямо в разметке — CSS читает их как имена линий.</p>
+<pre><code>&lt;!-- site/schedule.html — готовая разметка --&gt;
+&lt;!doctype html&gt;
+&lt;html lang="ru"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+  &lt;title&gt;Программа — FrontFest 2026&lt;/title&gt;
+  &lt;link rel="stylesheet" href="css/main.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header class="site-header"&gt;
+    &lt;a class="logo" href="index.html"&gt;Front&lt;span&gt;Fest&lt;/span&gt;&lt;/a&gt;
+    &lt;nav class="site-nav" aria-label="Основная навигация"&gt;
+      &lt;a href="index.html"&gt;Главная&lt;/a&gt;
+      &lt;a href="schedule.html" aria-current="page"&gt;Программа&lt;/a&gt;
+      &lt;a href="register.html"&gt;Регистрация&lt;/a&gt;
+    &lt;/nav&gt;
+    &lt;button class="theme-toggle" type="button" aria-label="Сменить тему"&gt;◐&lt;/button&gt;
+  &lt;/header&gt;
+
+  &lt;main id="main"&gt;
+    &lt;section class="section"&gt;
+      &lt;h1&gt;Программа · 14 ноября&lt;/h1&gt;
+      &lt;div class="schedule-layout"&gt;
+        &lt;div class="timetable"&gt;
+          &lt;p class="track-title" style="--track: a"&gt;Зал A · CSS и дизайн-системы&lt;/p&gt;
+          &lt;p class="track-title" style="--track: b"&gt;Зал B · Доступность и производительность&lt;/p&gt;
+
+          &lt;time class="slot-time" style="--start: t1000"&gt;10:00&lt;/time&gt;
+          &lt;time class="slot-time" style="--start: t1100"&gt;11:00&lt;/time&gt;
+          &lt;time class="slot-time" style="--start: t1200"&gt;12:00&lt;/time&gt;
+          &lt;time class="slot-time" style="--start: t1300"&gt;13:00&lt;/time&gt;
+          &lt;time class="slot-time" style="--start: t1400"&gt;14:00&lt;/time&gt;
+          &lt;time class="slot-time" style="--start: t1500"&gt;15:00&lt;/time&gt;
+          &lt;time class="slot-time" style="--start: t1600"&gt;16:00&lt;/time&gt;
+          &lt;time class="slot-time" style="--start: t1700"&gt;17:00&lt;/time&gt;
+
+          &lt;article class="session keynote" style="--track: all; --start: t1000; --end: t1100" data-time="10:00–11:00"&gt;
+            &lt;h3&gt;Открытие: CSS в 2026 году&lt;/h3&gt;&lt;p&gt;Анна Смирнова, Игорь Ким&lt;/p&gt;&lt;/article&gt;
+          &lt;article class="session" style="--track: a; --start: t1100; --end: t1200" data-time="11:00–12:00"&gt;
+            &lt;h3&gt;Каскадные слои на двухстах тысячах строк&lt;/h3&gt;&lt;p&gt;Анна Смирнова&lt;/p&gt;&lt;/article&gt;
+          &lt;article class="session" style="--track: b; --start: t1100; --end: t1130" data-time="11:00–11:30"&gt;
+            &lt;h3&gt;Фокус, который видно&lt;/h3&gt;&lt;p&gt;Мария Орлова&lt;/p&gt;&lt;/article&gt;
+          &lt;article class="session" style="--track: b; --start: t1130; --end: t1230" data-time="11:30–12:30"&gt;
+            &lt;h3&gt;CLS 0,4: разбор реального сайта&lt;/h3&gt;&lt;p&gt;Дмитрий Лебедев&lt;/p&gt;&lt;/article&gt;
+          &lt;article class="session break" style="--track: all; --start: t1300; --end: t1400" data-time="13:00–14:00"&gt;
+            &lt;h3&gt;Обед&lt;/h3&gt;&lt;/article&gt;
+          &lt;article class="session" style="--track: a; --start: t1400; --end: t1530" data-time="14:00–15:30"&gt;
+            &lt;h3&gt;Воркшоп: container queries в дизайн-системе&lt;/h3&gt;&lt;p&gt;Игорь Ким&lt;/p&gt;&lt;/article&gt;
+          &lt;article class="session" style="--track: b; --start: t1400; --end: t1500" data-time="14:00–15:00"&gt;
+            &lt;h3&gt;Анимации между страницами&lt;/h3&gt;&lt;p&gt;Елена Васнецова&lt;/p&gt;&lt;/article&gt;
+          &lt;article class="session" style="--track: a; --start: t1600; --end: t1700" data-time="16:00–17:00"&gt;
+            &lt;h3&gt;Subgrid на практике&lt;/h3&gt;&lt;p&gt;Павел Громов&lt;/p&gt;&lt;/article&gt;
+          &lt;article class="session" style="--track: b; --start: t1530; --end: t1630" data-time="15:30–16:30"&gt;
+            &lt;h3&gt;Reduced motion без компромиссов&lt;/h3&gt;&lt;p&gt;Мария Орлова&lt;/p&gt;&lt;/article&gt;
+          &lt;article class="session keynote" style="--track: all; --start: t1700; --end: t1800" data-time="17:00–18:00"&gt;
+            &lt;h3&gt;Закрытие и розыгрыш билетов&lt;/h3&gt;&lt;/article&gt;
+        &lt;/div&gt;
+
+        &lt;aside class="day-speakers" aria-label="Спикеры дня"&gt;
+          &lt;h2&gt;Спикеры дня&lt;/h2&gt;
+          &lt;ul class="speaker-list" role="list"&gt;
+            &lt;li class="speaker"&gt;&lt;article class="speaker-card"&gt;
+              &lt;img src="img/speaker-2.svg" alt="" width="160" height="160"&gt;
+              &lt;div class="speaker-body"&gt;&lt;h3&gt;Игорь Ким&lt;/h3&gt;&lt;p class="role"&gt;Дизайн-инженер, «Маршрут»&lt;/p&gt;
+                &lt;p class="talk"&gt;Container queries в дизайн-системе: компоненты, которые знают своё место&lt;/p&gt;&lt;/div&gt;
+            &lt;/article&gt;&lt;/li&gt;
+            &lt;li class="speaker"&gt;&lt;article class="speaker-card"&gt;
+              &lt;img src="img/speaker-3.svg" alt="" width="160" height="160"&gt;
+              &lt;div class="speaker-body"&gt;&lt;h3&gt;Мария Орлова&lt;/h3&gt;&lt;p class="role"&gt;Специалист по доступности&lt;/p&gt;
+                &lt;p class="talk"&gt;Фокус, контраст, reduced motion: доступность, которую видно в CSS&lt;/p&gt;&lt;/div&gt;
+            &lt;/article&gt;&lt;/li&gt;
+          &lt;/ul&gt;
+        &lt;/aside&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+
+  &lt;footer class="site-footer"&gt;
+    &lt;p&gt;© 2026 FrontFest. Сделано на чистом CSS.&lt;/p&gt;
+    &lt;a href="#main"&gt;Наверх ↑&lt;/a&gt;
+  &lt;/footer&gt;
+  &lt;script src="js/theme.js" defer&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<pre><code>/* layout.css — программа (пока только широкий экран; мобильный вид в 5.1) */
+.schedule-layout {
+  display: grid;
+  grid-template-columns: 1fr 20rem;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.timetable {
+  display: grid;
+  /* колонки: время + две дорожки; all-* охватывает обе */
+  grid-template-columns: [time] 4.5rem [a-start all-start] 1fr [a-end b-start] 1fr [b-end all-end];
+  /* строки: заголовки дорожек + каждые 30 минут с 10:00 до 18:00 */
+  grid-template-rows:
+    [head] auto
+    [t1000] minmax(2.75rem, auto) [t1030] minmax(2.75rem, auto)
+    [t1100] minmax(2.75rem, auto) [t1130] minmax(2.75rem, auto)
+    [t1200] minmax(2.75rem, auto) [t1230] minmax(2.75rem, auto)
+    [t1300] minmax(2.75rem, auto) [t1330] minmax(2.75rem, auto)
+    [t1400] minmax(2.75rem, auto) [t1430] minmax(2.75rem, auto)
+    [t1500] minmax(2.75rem, auto) [t1530] minmax(2.75rem, auto)
+    [t1600] minmax(2.75rem, auto) [t1630] minmax(2.75rem, auto)
+    [t1700] minmax(2.75rem, auto) [t1730] minmax(2.75rem, auto)
+    [t1800];
+  gap: var(--space-2) var(--space-3);
+}
+.track-title { grid-row: head; grid-column: var(--track); font-weight: 700; margin: 0; }
+.slot-time   { grid-column: time; grid-row: var(--start); color: var(--text-muted); font-size: var(--step--1); }
+.session     { grid-column: var(--track); grid-row: var(--start) / var(--end); }</code></pre>
+<pre><code>/* components.css — вид докладов */
+.session {
+  padding: var(--space-3);
+  border-radius: var(--radius-m);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-inline-start: 4px solid var(--brand);
+  &amp; h3 { font-size: var(--step-0); margin: 0; }
+  &amp; p { margin: var(--space-1) 0 0; color: var(--text-muted); font-size: var(--step--1); }
+}
+.session.keynote { background: var(--brand-soft); }
+.session.break { background: transparent; border-style: dashed; display: grid; place-items: center; }</code></pre>
+<p>Эксперимент с неявной сеткой: в DevTools поменяйте у одного доклада <code>--start: t1100</code> на несуществующее <code>t1115</code>.</p>
+<div class="why"><b>Зачем:</b> это задача, которую без grid решали абсолютным позиционированием с расчётом пикселей. Строки сетки — шкала времени с именованными линиями <code>[t1000]</code>, <code>[t1030]</code>…, колонки — дорожки. Доклад просто говорит «от линии t1100 до линии t1200 в дорожке a». Имена дорожек сделаны парами <code>a-start</code>/<code>a-end</code>, поэтому <code>grid-column: a</code> означает «от a-start до a-end», а общие для двух залов события используют область <code>all</code>. Время хранится в разметке как custom properties: CSS не знает про расписание, он только размещает по именам. Добавили доклад — CSS не меняется. <code>minmax(2.75rem, auto)</code>: получасовой слот не ниже 2.75rem, но растёт, если текст доклада не помещается. Несуществующее имя линии — не ошибка, а <b>неявная сетка</b>: grid создаёт новые линии с этим именем за пределами явной сетки, и доклад уезжает в конец таблицы.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p><code>localhost:8080/schedule.html</code>: слева часы, два зала. Открытие, обед и закрытие на всю ширину обеих дорожек. «Фокус, который видно» — полчаса, «CLS 0,4» начинается в 11:30 и заходит за 12:00, «Воркшоп» — полтора часа. Справа колонка «Спикеры дня». С <code>t1115</code> доклад уезжает под таблицу, а в оверлее DevTools появляются неявные строки.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Два доклада в одной дорожке пересекаются по времени. Что сделает grid? Проверьте, поставив «Subgrid на практике» на <code>t1500</code>. Как это можно было бы подсветить стилем?</li><li>Добавьте третий зал, изменив только CSS колонок и разметку одного доклада. Что пришлось поменять в <code>all-*</code>?</li><li>Порядок докладов в разметке не совпадает с порядком на экране. Что это значит для навигации с клавиатуры и скринридера? В каком порядке разметку правильно писать?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-4-4"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-4-4"></label><span class="num">Шаг 4.4</span>Тарифы на subgrid: цены и списки на одной линии во всех карточках — сравнение с flex-решением<a class="anchor" href="#step-4-4">#</a></span><div class="step-body">
+<pre><code>/* layout.css — вместо flex-версии из 3.3 */
+.pricing {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--space-4) var(--space-5);
+}</code></pre>
+<pre><code>/* components.css — .plan: строки берёт у родителя */
+.plan {
+  display: grid;
+  grid-row: span 4;                      /* четыре ребёнка: шапка, цена, список, кнопка */
+  grid-template-rows: subgrid;           /* строки общие со всеми карточками ряда */
+  row-gap: var(--space-4);               /* свой промежуток между строками внутри карточки */
+  align-content: start;
+  padding: var(--space-6);
+  /* фон, рамка, радиус — как в 3.3; flex-direction и margin-block-start у кнопки больше не нужны */
+}
+.plan .btn { align-self: end; }</code></pre>
+<p>Сравните высоту цен и начало списков в «Онлайн» и «Стандарте» до и после. Включите оверлей grid у <code>.pricing</code> и у одной <code>.plan</code>.</p>
+<div class="why"><b>Зачем:</b> на flex каждая карточка раскладывает детей сама, и бейдж «Популярный» в шапке «Стандарта» сдвигает вниз его цену и список относительно соседей. <code>subgrid</code> делает строки карточки частью сетки родителя: все шапки ряда в одной строке, её высота — по самой высокой шапке, все цены на одной линии, все списки начинаются одинаково. <code>grid-row: span 4</code> — карточка занимает четыре строки родителя, по числу своих детей. Это то, что раньше делали фиксированными высотами блоков или JS, который мерил элементы. Subgrid в Baseline с 2023 года.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>Цены всех трёх тарифов на одной горизонтали, списки начинаются на одной линии, кнопки внизу на одной линии. Оверлей показывает, что линии строк проходят через все карточки ряда. При переносе на узком экране каждая строка карточек выравнивается внутри себя.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Добавьте в одну карточку пятого ребёнка (например, <code>&lt;p&gt;</code> с условиями). Что сломалось и как это исправить в CSS?</li><li>Можно ли было выровнять цены без subgrid, задав шапкам фиксированную высоту? Что сломается при длинном названии тарифа или крупном шрифте?</li><li>Где ещё на сайте subgrid помог бы? (Подсказка: карточки спикеров с разной длиной должностей.)</li></ul></div>
+</div></div>
+
+<div class="next-box"><span class="tag">ИТОГ СЕССИИ 4 → ПЕРЕД СЕССИЕЙ 5</span><ul>
+<li>✅ <code>git add -A &amp;&amp; git commit -m "session 4: page grid, full-bleed, speakers, timetable, subgrid"</code></li>
+<li>📝 Ответы 4.1–4.4.</li>
+<li>📖 <a href="https://developer.mozilla.org/ru/docs/Web/CSS/CSS_containment/Container_queries" target="_blank">MDN: Container queries</a> и <a href="https://developer.mozilla.org/ru/docs/Web/CSS/:has" target="_blank">:has()</a> — 25 минут.</li>
+</ul></div>
+
+<div class="session-banner" id="session-5">Сессия <a href="#session-5" style="color:#fff;text-decoration:none">5</a> — Адаптив, container queries, :has(), формы <span>~3,5 часа</span></div>
+
+<div class="step" id="step-5-1"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-5-1"></label><span class="num">Шаг 5.1</span>Mobile-first: шапка и программа на узком экране, синтаксис диапазонов<a class="anchor" href="#step-5-1">#</a></span><div class="step-body">
+<pre><code>/* layout.css — шапка: базовые стили для узкого экрана, сложность добавляем по мере роста */
+.site-header { flex-wrap: wrap; }
+.site-nav {
+  order: 3;                    /* на телефоне навигация — отдельной строкой под логотипом и кнопкой */
+  flex-basis: 100%;
+  overflow-x: auto;            /* если пунктов станет больше — горизонтальный скролл, а не поломка */
+}
+@media (width &gt;= 40rem) {
+  .site-nav { order: 0; flex-basis: auto; }
+}</code></pre>
+<pre><code>/* layout.css — программа: на телефоне список по порядку разметки, время — из data-time */
+.schedule-layout { display: grid; gap: var(--space-6); }
+.timetable { display: grid; gap: var(--space-3); }
+.slot-time, .track-title { display: none; }
+.session::before {
+  content: attr(data-time) " · зал " var(--track-label, "");
+  display: block;
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+.session[style*="--track: a"] { --track-label: "A"; }
+.session[style*="--track: b"] { --track-label: "B"; }
+.session[style*="--track: all"] { --track-label: "оба"; }
+
+@media (width &gt;= 48rem) {
+  .timetable {
+    grid-template-columns: [time] 4.5rem [a-start all-start] 1fr [a-end b-start] 1fr [b-end all-end];
+    grid-template-rows: /* как в 4.3 */;
+    gap: var(--space-2) var(--space-3);
+  }
+  .slot-time, .track-title { display: block; }
+  .session::before { display: none; }
+  .track-title { grid-row: head; grid-column: var(--track); }
+  .slot-time   { grid-column: time; grid-row: var(--start); }
+  .session     { grid-column: var(--track); grid-row: var(--start) / var(--end); }
+}
+@media (width &gt;= 64rem) {
+  .schedule-layout { grid-template-columns: 1fr 20rem; align-items: start; }
+}</code></pre>
+<p>Перенесите правила сетки таймлайна из 4.3 внутрь медиазапроса <code>48rem</code> (код выше — схема: <code>grid-template-rows</code> скопируйте целиком). Проверьте в режиме устройства 360, 768 и 1280 пикселей.</p>
+<div class="why"><b>Зачем:</b> mobile-first — базовые стили для самого узкого экрана, а медиазапросы <code>&gt;=</code> только <b>добавляют</b>. Так мобильный CSS проще, а сложная раскладка включается, когда для неё есть место. Синтаксис диапазонов <code>(width &gt;= 48rem)</code> читается как математика и в Baseline с 2023 года. Точки перелома в <code>rem</code>, а не в пикселях: при крупном шрифте пользователя раскладка перестроится раньше, и текст не зажмётся. Таблица времени на телефоне бессмысленна — там нужен список. Раскладка меняется целиком, а время приходит из <code>attr(data-time)</code> в <code>::before</code>. Здесь медиазапрос уместен: решение зависит от окна, а не от места компонента. Сравните с 5.2.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>360px: логотип и ◐ в первой строке, навигация второй строкой; программа — список карточек «10:00–11:00 · зал оба», спикеры дня под ним. 768px: таблица с двумя залами, спикеры под таблицей. 1280px: таблица и колонка спикеров справа. Горизонтального скролла нет ни на одной ширине.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Селектор <code>[style*="--track: a"]</code> — хрупкий приём. Почему? Как сделать надёжнее, если разметку можно менять?</li><li>Увеличьте в браузере размер шрифта по умолчанию до 24px и посмотрите на 1280 пикселей. Какая раскладка включилась и почему это правильно?</li><li>Добавьте <code>@media (prefers-reduced-data: reduce)</code> или <code>(hover: none)</code> — что вы бы меняли по этим признакам на FrontFest?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-5-2"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-5-2"></label><span class="num">Шаг 5.2</span>Карточка спикера, которая знает своё место: ломаем медиазапросом, чиним container query; единицы cqi<a class="anchor" href="#step-5-2">#</a></span><div class="step-body">
+<p>Карточка должна быть вертикальной (аватар сверху), когда ей тесно, и горизонтальной, когда места много. Сначала — привычным способом:</p>
+<pre><code>/* components.css — ❌ через медиазапрос */
+.speaker-card { flex-direction: column; }
+@media (width &gt;= 30rem) {
+  .speaker-card { flex-direction: row; }
+}</code></pre>
+<p>Посмотрите на главную (сетка из трёх колонок) и на колонку «Спикеры дня» в программе при ширине 1280 и на телефоне. Затем почините:</p>
+<pre><code>/* layout.css — предок каждой карточки становится контейнером */
+.speaker { container-type: inline-size; }
+
+/* components.css — ✅ карточка реагирует на ширину своего контейнера */
+.speaker-card { flex-direction: column; }
+@container (inline-size &gt;= 24rem) {
+  .speaker-card { flex-direction: row; }
+  .speaker-card img { flex-basis: 6rem; inline-size: 6rem; }
+}
+.speaker-card h3 { font-size: clamp(1.05rem, 0.8rem + 3cqi, 1.4rem); }   /* шрифт от ширины карточки */</code></pre>
+<div class="why"><b>Зачем:</b> медиазапрос знает только ширину окна. На широком мониторе главная показывает карточки в сетке по ~20rem, в боковой колонке программы карточка тоже 20rem, а окно при этом 1280 пикселей. Медиазапрос делает обе горизонтальными, и в узком месте они сплющиваются. На телефоне же карточка на всю ширину экрана могла бы быть горизонтальной, но медиазапрос с порогом 30rem решает это за неё. Container query спрашивает ширину <b>контейнера</b>: <code>container-type: inline-size</code> у <code>li.speaker</code>, а стилизуется <code>.speaker-card</code> внутри. Сам контейнер своим же запросом стилизовать нельзя — поэтому разметка «обёртка + карточка». Единица <code>cqi</code> — 1% ширины контейнера: заголовок растёт вместе с карточкой, а не с окном. Компонент становится переносимым — это основа современных дизайн-систем (доклад Игоря Кима на FrontFest про это).</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>С медиазапросом на 1280 пикселях карточки в боковой колонке программы горизонтальные и зажатые, текст узкой полоской. С container query: в сетке главной и в боковой колонке карточки вертикальные, на телефоне в одну колонку — горизонтальные (аватар слева). В DevTools у <code>li.speaker</code> значок <code>container</code>, при выборе видно, какой запрос сработал.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Поставьте <code>container-type: inline-size</code> на саму <code>.speaker-card</code> и перенесите запрос на неё. Что сломалось и почему?</li><li>Почему <code>container-type: inline-size</code>, а не <code>size</code>? Что случится с высотой контейнера при <code>size</code>?</li><li>Дайте контейнеру имя (<code>container: speaker / inline-size</code>) и используйте <code>@container speaker (...)</code>. Когда имена обязательны?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-5-3"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-5-3"></label><span class="num">Шаг 5.3</span>Форма регистрации: :has() вместо JS, ошибки только после взаимодействия, вложенность<a class="anchor" href="#step-5-3">#</a></span><div class="step-body">
+<pre><code>&lt;!-- site/register.html — готовая разметка --&gt;
+&lt;!doctype html&gt;
+&lt;html lang="ru"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+  &lt;title&gt;Регистрация — FrontFest 2026&lt;/title&gt;
+  &lt;link rel="stylesheet" href="css/main.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header class="site-header"&gt;
+    &lt;a class="logo" href="index.html"&gt;Front&lt;span&gt;Fest&lt;/span&gt;&lt;/a&gt;
+    &lt;nav class="site-nav" aria-label="Основная навигация"&gt;
+      &lt;a href="index.html"&gt;Главная&lt;/a&gt;
+      &lt;a href="schedule.html"&gt;Программа&lt;/a&gt;
+      &lt;a href="register.html" aria-current="page"&gt;Регистрация&lt;/a&gt;
+    &lt;/nav&gt;
+    &lt;button class="theme-toggle" type="button" aria-label="Сменить тему"&gt;◐&lt;/button&gt;
+  &lt;/header&gt;
+
+  &lt;main id="main"&gt;
+    &lt;section class="section"&gt;
+      &lt;h1&gt;Регистрация&lt;/h1&gt;
+      &lt;form class="form" action="#" novalidate&gt;
+        &lt;div class="field"&gt;
+          &lt;label for="name"&gt;Имя и фамилия&lt;/label&gt;
+          &lt;input id="name" name="name" required minlength="3" autocomplete="name"&gt;
+          &lt;p class="error-text"&gt;Минимум 3 символа&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="field"&gt;
+          &lt;label for="email"&gt;Email&lt;/label&gt;
+          &lt;input id="email" name="email" type="email" required autocomplete="email"&gt;
+          &lt;p class="error-text"&gt;Проверьте адрес: в нём нужна @ и домен&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="field"&gt;
+          &lt;label for="company"&gt;Компания &lt;span class="optional"&gt;необязательно&lt;/span&gt;&lt;/label&gt;
+          &lt;input id="company" name="company" autocomplete="organization"&gt;
+        &lt;/div&gt;
+
+        &lt;fieldset class="plans"&gt;
+          &lt;legend&gt;Тариф&lt;/legend&gt;
+          &lt;label class="plan-option"&gt;&lt;input type="radio" name="plan" value="online" required&gt; Онлайн &lt;b&gt;4 900 ₽&lt;/b&gt;&lt;/label&gt;
+          &lt;label class="plan-option"&gt;&lt;input type="radio" name="plan" value="standard" checked&gt; Стандарт &lt;b&gt;14 900 ₽&lt;/b&gt;&lt;/label&gt;
+          &lt;label class="plan-option"&gt;&lt;input type="radio" name="plan" value="workshops" id="plan-workshops"&gt; С воркшопами &lt;b&gt;24 900 ₽&lt;/b&gt;&lt;/label&gt;
+        &lt;/fieldset&gt;
+
+        &lt;fieldset class="workshops"&gt;
+          &lt;legend&gt;Воркшопы (выберите два)&lt;/legend&gt;
+          &lt;label&gt;&lt;input type="checkbox" name="ws" value="cq"&gt; Container queries в дизайн-системе&lt;/label&gt;
+          &lt;label&gt;&lt;input type="checkbox" name="ws" value="a11y"&gt; Аудит доступности за час&lt;/label&gt;
+          &lt;label&gt;&lt;input type="checkbox" name="ws" value="perf"&gt; Core Web Vitals руками&lt;/label&gt;
+        &lt;/fieldset&gt;
+
+        &lt;div class="field"&gt;
+          &lt;label for="comment"&gt;Комментарий &lt;span class="optional"&gt;необязательно&lt;/span&gt;&lt;/label&gt;
+          &lt;textarea id="comment" name="comment" rows="2" placeholder="Например, нужен ли вам счёт на компанию"&gt;&lt;/textarea&gt;
+        &lt;/div&gt;
+
+        &lt;label class="agree"&gt;&lt;input type="checkbox" name="agree" required&gt; Согласен с правилами конференции&lt;/label&gt;
+        &lt;button class="btn btn-primary submit" type="submit"&gt;Зарегистрироваться&lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+
+  &lt;footer class="site-footer"&gt;
+    &lt;p&gt;© 2026 FrontFest. Сделано на чистом CSS.&lt;/p&gt;
+    &lt;a href="#main"&gt;Наверх ↑&lt;/a&gt;
+  &lt;/footer&gt;
+  &lt;script src="js/theme.js" defer&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<pre><code>/* components.css — форма; nesting держит всё про поле в одном месте */
+.form { display: grid; gap: var(--space-5); max-inline-size: 36rem; }
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+
+  &amp; label { font-weight: 600; }
+  &amp;:has(:required) label::after { content: " *"; color: var(--danger); }   /* звёздочка, если поле обязательное */
+  &amp; .error-text { display: none; margin: 0; color: var(--danger); font-size: var(--step--1); }
+
+  /* ошибка — только после того, как пользователь поработал с полем */
+  &amp;:has(:user-invalid) {
+    &amp; input, &amp; textarea { border-color: var(--danger); }
+    &amp; .error-text { display: block; }
+  }
+}
+.optional { font-weight: 400; color: var(--text-muted); font-size: var(--step--1); }
+
+/* блок воркшопов виден, только если выбран тариф «С воркшопами» — без JS */
+.workshops { display: none; }
+.form:has(#plan-workshops:checked) .workshops { display: grid; gap: var(--space-2); }
+
+/* выбранная карточка тарифа подсвечивается: родитель по состоянию ребёнка */
+.plan-option:has(:checked) { border-color: var(--brand); background: var(--brand-soft); }
+
+/* кнопка выглядит неактивной, пока в форме есть невалидные поля */
+.form:has(:invalid) .submit { opacity: 0.6; }</code></pre>
+<p>Откройте <code>/register.html</code>: пока ничего не трогали, ошибок нет. Кликните в «Имя», уйдите — ошибка? Введите два символа и уйдите. Выберите тариф «С воркшопами». Затем для сравнения временно замените <code>:user-invalid</code> на <code>:invalid</code>.</p>
+<div class="why"><b>Зачем:</b> <code>:has()</code> — «элемент, внутри которого есть…», то есть давно желанный родительский селектор. Он стилизует поле по состоянию его инпута, форму — по выбранному радио, карточку тарифа — по отмеченному внутри неё input. Раньше каждое такое правило означало JS-обработчик и переключение классов. <code>:user-invalid</code> срабатывает, только когда пользователь взаимодействовал с полем (изменил и ушёл или попытался отправить форму), а <code>:invalid</code> — сразу. С ним форма встречает человека красными полями, которые он ещё не успел заполнить. Вложенность собирает всё про <code>.field</code> в один блок. <code>&amp;:has(:user-invalid) { &amp; input … }</code> раскрывается в <code>.field:has(:user-invalid) input</code>. Валидация здесь — только визуальная подсказка; сервер всё равно проверяет данные.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>При загрузке ошибок нет, у «Имя» и «Email» красные звёздочки, у «Компании» нет. После ухода из «Имя» с двумя символами — красная рамка и «Минимум 3 символа», после исправления ошибка исчезает. «Стандарт» подсвечен сразу (он <code>checked</code>). Выбор «С воркшопами» показывает блок воркшопов, выбор другого тарифа — прячет. С <code>:invalid</code> вместо <code>:user-invalid</code> обязательные поля красные сразу при загрузке.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Какая специфичность у <code>.form:has(#plan-workshops:checked) .workshops</code>? Почему здесь это не проблема? (Подсказка: слои.)</li><li>Спрятанный через <code>display: none</code> блок воркшопов — участвуют ли его поля в отправке формы? А если бы там было обязательное поле?</li><li>Сделайте счётчик «выбрано N из 2» для воркшопов на CSS. (Подсказка: <code>counter-reset</code> и <code>counter-increment</code> на <code>:checked</code>.) А ограничить выбор двумя без JS можно?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-5-4"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-5-4"></label><span class="num">Шаг 5.4</span>Поля формы: единый вид, accent-color, фокус с токенами, авторазмер textarea, доступность<a class="anchor" href="#step-5-4">#</a></span><div class="step-body">
+<pre><code>/* components.css */
+:where(input:not([type="checkbox"], [type="radio"]), textarea, select) {
+  inline-size: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  background: var(--surface);
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &amp;:hover { border-color: color-mix(in oklch, var(--border), var(--text) 25%); }
+  &amp;:focus-visible {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 4px color-mix(in oklch, var(--brand), transparent 75%);
+  }
+  &amp;::placeholder { color: var(--text-muted); opacity: 1; }
+  &amp;:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+textarea { field-sizing: content; min-block-size: 3lh; max-block-size: 12lh; resize: vertical; }   /* растёт с текстом (прогрессивно) */
+
+input[type="checkbox"], input[type="radio"] { accent-color: var(--brand); inline-size: 1.15em; block-size: 1.15em; }
+
+fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: var(--space-2); }
+legend { font-weight: 600; margin-block-end: var(--space-2); padding: 0; }
+.plans { grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); }
+.plan-option {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
+  padding: var(--space-4);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-m);
+  cursor: pointer;
+  &amp; b { inline-size: 100%; }
+  &amp;:focus-within { outline: 3px solid color-mix(in oklch, var(--brand), transparent 50%); outline-offset: 2px; }
+}
+.agree { display: flex; gap: var(--space-2); align-items: center; }</code></pre>
+<p>Пройдите всю форму только клавиатурой: Tab, Shift+Tab, стрелки в группе радио, пробел на чекбоксе. Переключите тему. Введите в комментарий пять строк.</p>
+<div class="why"><b>Зачем:</b> <code>:where()</code> вокруг селектора полей даёт нулевую специфичность. Базовый вид полей легко переопределить в конкретной форме, не повышая селекторы, — приём для библиотечных стилей. Фокус не убирается, а заменяется своим: <code>outline: none</code> без замены — одна из самых частых ошибок доступности. Кольцо фокуса строится <code>color-mix</code> от бренда, поэтому в тёмной теме оно правильного цвета само. <code>accent-color</code> красит нативные чекбоксы и радио в бренд без их пересоздания из <code>div</code>: нативные остаются доступными. <code>:focus-within</code> подсвечивает карточку тарифа, когда фокус на радио внутри неё. <code>field-sizing: content</code> растит textarea с текстом, а единица <code>lh</code> (высота строки) задаёт пределы в строках. Где свойство не поддерживается, textarea просто остаётся обычной, с ручным ресайзом.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>Поля одного вида, при фокусе с клавиатуры — фиолетовая рамка и мягкое кольцо; в тёмной теме кольцо светлее. Чекбоксы и радио фиолетовые. Карточка тарифа с фокусом внутри обведена. Текстовое поле растёт до 12 строк (в Chrome), дальше появляется прокрутка. Всю форму можно заполнить без мыши, и всегда видно, где фокус.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Почему у радио внутри <code>.plan-option</code> не нужен отдельный атрибут <code>for</code>?</li><li>Проверьте контраст рамки поля к фону. Если он ниже 3:1, что говорит WCAG о границах интерактивных элементов, и как поправить токен <code>--border</code> для полей, не трогая карточки?</li><li>Сделайте кастомную стрелку для <code>select</code> через <code>appearance: none</code> и <code>background-image</code>. Что теряется и что остаётся от нативного поведения?</li></ul></div>
+</div></div>
+
+<div class="next-box"><span class="tag">ИТОГ СЕССИИ 5 → ПЕРЕД СЕССИЕЙ 6</span><ul>
+<li>✅ <code>git add -A &amp;&amp; git commit -m "session 5: mobile-first, container queries, :has form"</code></li>
+<li>📝 Ответы 5.1–5.4.</li>
+<li>📖 <a href="https://www.joshwcomeau.com/css/stacking-contexts/" target="_blank">What the heck, z-index??</a> и <a href="https://developer.mozilla.org/ru/docs/Web/API/View_Transition_API" target="_blank">View Transitions</a> — 25 минут.</li>
+</ul></div>
+
+<div class="session-banner" id="session-6">Сессия <a href="#session-6" style="color:#fff;text-decoration:none">6</a> — Позиционирование, движение, view transitions, сборка <span>~3,5 часа</span></div>
+
+<div class="step" id="step-6-1"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-6-1"></label><span class="num">Шаг 6.1</span>Липкая шапка: ломаем overflow-x: hidden и transform-подъёмом карточек, чиним clip и z-index; контексты наложения<a class="anchor" href="#step-6-1">#</a></span><div class="step-body">
+<pre><code>/* layout.css — шапка прилипает к верху при прокрутке, полупрозрачная с размытием */
+.site-header {
+  position: sticky;
+  inset-block-start: 0;
+  background: color-mix(in oklch, var(--surface), transparent 15%);
+  backdrop-filter: blur(12px);
+}
+/* components.css — лёгкий подъём карточек при наведении */
+.speaker-card { transition: translate 0.2s, box-shadow 0.2s; }
+.speaker-card:hover { translate: 0 -4px; box-shadow: var(--shadow-2); }</code></pre>
+<p><b>Поломка 1.</b> Частый «фикс» горизонтального скролла — добавьте в <span class="file">base.css</span> и прокрутите страницу:</p>
+<pre><code>html, body { overflow-x: hidden; }      /* ❌ */</code></pre>
+<p>Почините: замените <code>hidden</code> на <code>clip</code>.</p>
+<pre><code>html, body { overflow-x: clip; }        /* ✅ режет лишнее, но не создаёт контейнер прокрутки */</code></pre>
+<p><b>Поломка 2.</b> Прокрутите так, чтобы карточки спикеров ушли под шапку, и наведите курсор на карточку, которая частично под ней. Затем почините:</p>
+<pre><code>.site-header { z-index: 10; }</code></pre>
+<div class="why"><b>Зачем:</b> <code>position: sticky</code> ведёт себя как обычный элемент, пока не доедет до порога (<code>inset-block-start: 0</code>) <b>ближайшего предка с прокруткой</b>, а там прилипает. <code>overflow-x: hidden</code> на <code>body</code> при таком же значении на <code>html</code> делает <code>body</code> контейнером прокрутки без ограничения высоты. Шапке больше не к чему прилипать, и она уезжает вместе со страницей. <code>overflow: clip</code> обрезает так же, но контейнер прокрутки не создаёт. Вторая поломка — порядок отрисовки. <code>translate</code> создаёт у карточки <b>контекст наложения</b>, и она рисуется в том же слое, что позиционированные элементы. Раз карточка в разметке позже шапки, она оказывается сверху. <code>z-index: 10</code> у шапки поднимает её над всем, что в корневом контексте. Контекст наложения создают <code>position</code> + <code>z-index</code>, <code>transform</code>/<code>translate</code>, <code>opacity &lt; 1</code>, <code>filter</code>, <code>backdrop-filter</code>, <code>isolation: isolate</code>, <code>container-type</code>. Внутри контекста z-index детей сравниваются только между собой — поэтому «<code>z-index: 9999</code> не работает».</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>Правильный вид: при прокрутке шапка остаётся наверху, контент под ней просвечивает размыто. С <code>overflow-x: hidden</code> шапка уезжает вверх вместе со страницей. Без <code>z-index</code> наведённая карточка перекрывает шапку. С <code>clip</code> и <code>z-index</code> всё на месте. В DevTools → ⋮ → More tools → Layers видны отдельные слои шапки и карточек.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Поставьте бейджу «Популярный» <code>position: relative; z-index: 9999</code> и дайте карточке тарифа <code>translate</code> при наведении. Прокрутите тарифы под шапку. Почему бейдж всё равно под шапкой?</li><li>Что делает <code>isolation: isolate</code> и почему его полезно ставить на корень компонента с внутренними z-index?</li><li>Якорная ссылка «Наверх» и переход к <code>#speakers</code> прячут заголовок секции под липкой шапкой. Как это исправить одним свойством? (Подсказка: <code>scroll-margin-block-start</code> или <code>scroll-padding-block-start</code>.)</li></ul></div>
+</div></div>
+
+<div class="step" id="step-6-2"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-6-2"></label><span class="num">Шаг 6.2</span>Движение: transitions и keyframes, reduced motion, анимируемая переменная через @property, popover с @starting-style<a class="anchor" href="#step-6-2">#</a></span><div class="step-body">
+<pre><code>/* components.css — выделенный тариф: вращающаяся градиентная рамка */
+@property --angle {                      /* регистрируем тип — теперь браузер умеет его интерполировать */
+  syntax: "&lt;angle&gt;";
+  initial-value: 0deg;
+  inherits: false;
+}
+.plan-featured {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    conic-gradient(from var(--angle), var(--brand), oklch(70% 0.18 330), var(--brand)) border-box;
+  animation: spin-border 6s linear infinite;
+}
+@keyframes spin-border { to { --angle: 360deg; } }
+
+/* popover «Что входит в Стандарт»: появление с анимацией, в том числе из display: none */
+.popover {
+  max-inline-size: min(28rem, 90vw);
+  padding: var(--space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-l);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-2);
+  opacity: 0;
+  scale: 0.96;
+  transition: opacity 0.2s, scale 0.2s, display 0.2s allow-discrete, overlay 0.2s allow-discrete;
+  &amp;:popover-open { opacity: 1; scale: 1; }
+  &amp;::backdrop { background: oklch(0% 0 0 / 0.3); }
+}
+@starting-style {
+  .popover:popover-open { opacity: 0; scale: 0.96; }   /* откуда анимировать при первом показе */
+}
+
+/* вопросы: плавное раскрытие details (прогрессивно) */
+:root { interpolate-size: allow-keywords; }            /* разрешить анимацию до height: auto */
+.faq-item {
+  border-block-end: 1px solid var(--border);
+  padding-block: var(--space-3);
+  &amp; summary { cursor: pointer; font-weight: 600; }
+  &amp;::details-content { block-size: 0; overflow: clip; transition: block-size 0.25s, content-visibility 0.25s allow-discrete; }
+  &amp;[open]::details-content { block-size: auto; }
+}
+
+/* уважение к настройке «уменьшить движение» — последним, в слое utilities */</code></pre>
+<pre><code>/* utilities.css */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}</code></pre>
+<p>Проверьте: кнопка «Что входит в «Стандарт»?» открывает popover, Esc и клик вне закрывают его. В DevTools → Rendering включите «Emulate prefers-reduced-motion: reduce». Удалите <code>@property</code> и посмотрите на рамку.</p>
+<div class="why"><b>Зачем:</b> transition анимирует переход между двумя состояниями, keyframes — сценарий. Анимировать выгоднее <code>transform</code>/<code>translate</code>/<code>scale</code>/<code>opacity</code>: их браузер двигает на композиторе без пересчёта раскладки, а анимация <code>top</code> или <code>height</code> пересчитывает страницу на каждом кадре. Обычная custom property для браузера — строка, и анимировать «строку» он не умеет: значение прыгает в конце. <code>@property</code> с <code>syntax: "&lt;angle&gt;"</code> объявляет тип, и угол градиента плавно крутится. Popover API даёт всплывающее окно без JS: верхний слой, Esc, клик вне, фокус. Анимировать появление из <code>display: none</code> раньше было нельзя; <code>@starting-style</code> задаёт стартовые значения, а <code>allow-discrete</code> разрешает <code>display</code> и <code>overlay</code> участвовать в переходе. Настройка «уменьшить движение» у людей с вестибулярными нарушениями — не пожелание: анимации отключаются глобально. Ради этого правила <code>!important</code> и допустим: смысл у него «всегда».</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>Рамка «Стандарта» медленно переливается по кругу. Без <code>@property</code> рамка статична (или прыгает раз в 6 секунд). Popover плавно появляется и исчезает, фон затемняется. В Chrome вопросы раскрываются плавно, в браузерах без <code>::details-content</code> — мгновенно, но работают. С эмуляцией reduced motion ничего не движется, popover появляется сразу.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Замените подъём карточек <code>translate</code> на <code>margin-block-start: -4px</code> и посмотрите в DevTools → Performance, что происходит на каждом кадре.</li><li>Уберите <code>@starting-style</code>. Анимируется ли первое появление popover? А закрытие?</li><li>Правило reduced motion убивает и вращение рамки. Как оставить спокойную альтернативу (например, статичный градиент), а не «ничего»?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-6-3"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-6-3"></label><span class="num">Шаг 6.3</span>Анимация переходов между страницами: cross-document view transitions как прогрессивное улучшение<a class="anchor" href="#step-6-3">#</a></span><div class="step-body">
+<pre><code>/* base.css */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }            /* включить анимацию переходов между страницами сайта */
+}
+
+.logo { view-transition-name: site-logo; }          /* одинаковое имя на обеих страницах → элемент «перелетает» */
+main h1 { view-transition-name: page-title; }       /* имя должно быть уникальным на странице */
+
+/* своя анимация для остальной страницы: лёгкий сдвиг и растворение */
+::view-transition-old(root) { animation: 0.25s ease-in both vt-out; }
+::view-transition-new(root) { animation: 0.3s ease-out both vt-in; }
+@keyframes vt-out { to { opacity: 0; translate: 0 -12px; } }
+@keyframes vt-in { from { opacity: 0; translate: 0 12px; } }</code></pre>
+<p>Переходите по ссылкам шапки между главной, программой и регистрацией в Chrome, затем в браузере без поддержки (Firefox, если там ещё нет).</p>
+<div class="why"><b>Зачем:</b> обычный переход между страницами — белая вспышка и мгновенная смена. Cross-document view transitions делают снимок старой страницы, загружают новую и анимируют разницу. Элементы с одинаковым <code>view-transition-name</code> на обеих страницах «перелетают» из старого положения в новое, остальное растворяется. Всё это без SPA и без JS — многостраничный сайт из трёх HTML-файлов. Это чистое прогрессивное улучшение: браузер, который не знает <code>@view-transition</code>, игнорирует правило, и переходы остаются обычными. Отсюда же правило для любой новой возможности: сайт обязан работать без неё. Обёртка в <code>prefers-reduced-motion: no-preference</code> включает анимацию только тем, кто не просил уменьшить движение.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span><p>В Chrome при переходе «Главная → Программа» логотип остаётся на месте, заголовок страницы плавно превращается из «FrontFest 2026: …» в «Программа · 14 ноября», остальное мягко сменяется со сдвигом. В браузере без поддержки — обычная навигация без ошибок. Если одинаковое имя окажется у двух элементов на странице, анимация на этом переходе пропускается, а в консоли появляется предупреждение.</p></div>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Дайте имя <code>speaker-card</code> всем карточкам спикеров. Что произойдёт при переходе и почему имена должны быть уникальными? Как именовать карточки, если нужно (подсказка: <code>view-transition-name: match-element</code> или имя через <code>style</code>)?</li><li>Почему <code>@view-transition</code> обёрнут в медиазапрос, а не отключается в общем правиле reduced motion из 6.2?</li></ul></div>
+</div></div>
+
+<div class="step" id="step-6-4"><span class="step-head"><label class="done-label" title="Отметить шаг пройденным"><input type="checkbox" class="done" data-key="step-6-4"></label><span class="num">Шаг 6.4</span>Сборка: Lightning CSS — склейка слоёв, минификация, фолбэки; итоговая архитектура и мост к Tailwind<a class="anchor" href="#step-6-4">#</a></span><div class="step-body">
+<pre><code>docker run --rm -v "$PWD":/w -w /w node:22-slim sh -c \
+  "npx -y lightningcss-cli --bundle --minify --targets '&gt;= 0.5%' site/css/main.css -o dist/main.css"
+wc -c site/css/*.css | tail -1
+wc -c dist/main.css
+grep -o '@layer[^{;]*' dist/main.css | head -5</code></pre>
+<p>Посмотрите в <span class="file">dist/main.css</span>, во что превратились <code>light-dark()</code>, <code>oklch()</code> и вложенность при целевых браузерах <code>&gt;= 0.5%</code>. Поменяйте цель на <code>'last 2 Chrome versions'</code> и сравните размер.</p>
+<div class="why"><b>Зачем:</b> в разработке удобно держать CSS в файлах по слоям, но каждый <code>@import</code> — отдельный запрос, выполняемый последовательно. Lightning CSS склеивает импорты в один файл, <b>сохраняя слои</b> (<code>@import … layer(x)</code> превращается в <code>@layer x { … }</code>), минифицирует и по списку целевых браузеров (browserslist) добавляет фолбэки. Вложенность раскрывается, для старых браузеров появляются запасные цвета рядом с oklch. Это же движок, на котором построен Tailwind v4, — в следующей лабе вы встретите его снова. Сам CSS при этом пишется современный: инструмент решает совместимость.</div>
+<div class="fix-box"><span class="tag">ОЖИДАЕМЫЙ РЕЗУЛЬТАТ</span>
+<pre>  ~20000 total           ← исходники (порядок величины)
+  ~11000 dist/main.css   ← один файл, без пробелов и комментариев
+@layer reset,vendor,tokens,base,layout,components,utilities
+@layer reset
+@layer vendor
+…</pre>
+<p>Точные цифры зависят от вашего кода. Для <code>'last 2 Chrome versions'</code> файл меньше: фолбэки не нужны.</p></div>
+<h3>Итоговая архитектура</h3>
+<table>
+<tr><th>Слой</th><th>Что внутри</th><th>Правило</th></tr>
+<tr><td><code>reset</code></td><td>box-sizing, margin, медиа, формы</td><td>низкая специфичность, <code>:where()</code></td></tr>
+<tr><td><code>vendor</code></td><td>чужой CSS</td><td>ниже ваших стилей независимо от селекторов</td></tr>
+<tr><td><code>tokens</code></td><td>отступы, шрифты, цвета, темы</td><td>только custom properties на <code>:root</code></td></tr>
+<tr><td><code>base</code></td><td>элементы: body, h1–h3, a, фокус, переносы</td><td>селекторы типов</td></tr>
+<tr><td><code>layout</code></td><td>каркас, full-bleed, сетки секций, таймлайн</td><td>как расположено, а не как выглядит</td></tr>
+<tr><td><code>components</code></td><td>btn, speaker-card, plan, session, form, popover</td><td>один компонент — один блок с nesting не глубже двух уровней</td></tr>
+<tr><td><code>utilities</code></td><td>visually-hidden, flow, reduced motion</td><td>последние; <code>!important</code> только здесь</td></tr>
+</table>
+<h3>Мост к Tailwind: то же самое, записанное классами</h3>
+<table>
+<tr><th>Вы написали в CSS</th><th>В Tailwind v4</th></tr>
+<tr><td>токены <code>--space-*</code>, <code>--step-*</code>, <code>--brand</code> в слое <code>tokens</code></td><td><code>@theme { --spacing: …; --text-*: …; --color-brand: … }</code> — генерирует классы <code>p-4</code>, <code>text-lg</code>, <code>bg-brand</code></td></tr>
+<tr><td><code>@layer reset, base, components, utilities</code></td><td>те же нативные слои: <code>@layer theme, base, components, utilities</code></td></tr>
+<tr><td><code>display: flex; gap: …; margin-inline-start: auto</code></td><td><code>flex gap-4 ms-auto</code></td></tr>
+<tr><td><code>repeat(auto-fill, minmax(min(100%, 18rem), 1fr))</code></td><td><code>grid-cols-[repeat(auto-fill,minmax(min(100%,18rem),1fr))]</code> — Tailwind не избавляет от понимания</td></tr>
+<tr><td><code>@container (inline-size &gt;= 24rem)</code></td><td><code>@container</code> на родителе, <code>@md:flex-row</code> на ребёнке</td></tr>
+<tr><td><code>.form:has(#plan-workshops:checked) .workshops</code></td><td><code>group-has-[#plan-workshops:checked]:grid</code></td></tr>
+<tr><td><code>light-dark()</code> + <code>color-scheme</code></td><td><code>dark:</code>-вариант, настраиваемый через <code>@custom-variant</code></td></tr>
+<tr><td><code>@media (prefers-reduced-motion: reduce)</code></td><td><code>motion-reduce:</code> / <code>motion-safe:</code></td></tr>
+<tr><td>Lightning CSS: сборка и фолбэки</td><td>встроен в движок Tailwind v4</td></tr>
+</table>
+<pre><code>git add -A &amp;&amp; git commit -m "session 6: sticky, motion, popover, view transitions, build"</code></pre>
+<div class="note-box"><span class="tag">ПРОВЕРЬ СЕБЯ</span><ul><li>Назовите для каждого слоя одно правило из вашего кода, которое оказалось бы не на своём месте, если бы слоёв не было. Что бы с ним произошло?</li><li>Какие три места в вашем CSS было бы тяжелее всего переписать на Tailwind и почему? (К этому вернёмся в Tailwind-лабе.)</li></ul></div>
+</div></div>
+
+<div class="next-box"><span class="tag">ИТОГ СЕССИИ 6</span><ul>
+<li>✅ Лаба пройдена. Теперь раздел 13 письменно.</li>
+<li>📝 README: как запустить, структура слоёв, какие возможности используются как прогрессивные.</li>
+</ul></div>
+
+<h2 id="sec-11"><label class="done-label" title="Отметить раздел пройденным"><input type="checkbox" class="done" data-key="sec-11"></label>11. Чек-лист: концепция ↔ где она в коде <a class="anchor" href="#sec-11">#</a></h2>
+
+<table>
+<tr><th>Концепция</th><th>Где в коде</th><th>Одна фраза</th></tr>
+<tr><td>Стили браузера, reset</td><td><span class="file">reset.css</span> 1.2</td><td>убрать различия и неудобные умолчания</td></tr>
+<tr><td><code>rem</code>, <code>ch</code>, <code>line-height</code> без единиц</td><td><span class="file">base.css</span> 1.2</td><td>уважать настройки пользователя, держать длину строки</td></tr>
+<tr><td>Специфичность, <code>:where()</code>, <code>!important</code></td><td>vendor-виджет 1.3</td><td>id перевешивает любые классы; <code>:where</code> обнуляет</td></tr>
+<tr><td>Каскадные слои</td><td><span class="file">main.css</span> 1.3</td><td>слой важнее специфичности; у <code>!important</code> порядок обратный</td></tr>
+<tr><td>Схлопывание margin, <code>flow-root</code>, <code>gap</code></td><td>hero 1.4</td><td>отступы между детьми задаёт родитель</td></tr>
+<tr><td>Логические свойства</td><td>везде с 1.4</td><td>block/inline вместо top/left — работает для RTL</td></tr>
+<tr><td>Custom properties, <code>clamp()</code></td><td><span class="file">tokens.css</span> 2.1</td><td>система вместо магических чисел; резиновые размеры</td></tr>
+<tr><td><code>oklch</code>, <code>color-mix</code>, относительный цвет</td><td>палитра 2.2</td><td>воспринимаемая светлота; производные от базового</td></tr>
+<tr><td><code>light-dark()</code>, <code>color-scheme</code></td><td>темы 2.3</td><td>тема — одно свойство</td></tr>
+<tr><td><code>text-wrap</code>, <code>overflow-wrap: anywhere</code>, line-clamp</td><td>карточки 2.4</td><td>текст не ломает раскладку</td></tr>
+<tr><td>Flex: оси, <code>gap</code>, <code>margin: auto</code></td><td>шапка 3.1</td><td>главная и поперечная ось; «оттолкнуть»</td></tr>
+<tr><td><code>flex</code> grow/shrink/basis, <code>min-width: auto</code></td><td>медиа-объект 3.2</td><td><code>min-inline-size: 0</code> — лекарство от распирания</td></tr>
+<tr><td><code>flex-wrap</code>, кнопка вниз через <code>margin-block-start: auto</code></td><td>тарифы 3.3</td><td>адаптивный ряд без медиазапросов</td></tr>
+<tr><td>Прижатый подвал, full-bleed</td><td><code>body</code>, <code>main</code> 4.1</td><td><code>auto 1fr auto</code>; именованные линии</td></tr>
+<tr><td><code>auto-fill</code> / <code>auto-fit</code>, <code>minmax(min(100%, …), 1fr)</code></td><td>спикеры 4.2</td><td>колонки «сколько влезет» без переполнения</td></tr>
+<tr><td>Размещение по именованным линиям, неявная сетка</td><td>таймлайн 4.3</td><td>CSS размещает, разметка хранит данные</td></tr>
+<tr><td><code>subgrid</code></td><td>hero 4.1, тарифы 4.4</td><td>дети выравниваются по сетке предка</td></tr>
+<tr><td>Mobile-first, диапазоны в медиазапросах</td><td>шапка, программа 5.1</td><td>медиазапрос — когда решает окно</td></tr>
+<tr><td>Container queries, <code>cqi</code></td><td>карточка спикера 5.2</td><td>компонент решает по своему месту</td></tr>
+<tr><td><code>:has()</code>, <code>:user-invalid</code>, nesting</td><td>форма 5.3</td><td>состояние родителя по ребёнку без JS</td></tr>
+<tr><td><code>accent-color</code>, <code>:focus-visible</code>, <code>field-sizing</code></td><td>поля 5.4</td><td>нативные контролы в бренде, видимый фокус</td></tr>
+<tr><td><code>sticky</code>, <code>overflow: clip</code>, контексты наложения</td><td>шапка 6.1</td><td>почему «z-index не работает»</td></tr>
+<tr><td>transitions, keyframes, <code>@property</code>, reduced motion</td><td>6.2</td><td>анимировать composited-свойства; уважать настройку</td></tr>
+<tr><td>Popover, <code>@starting-style</code>, <code>allow-discrete</code></td><td>6.2</td><td>появление из <code>display: none</code></td></tr>
+<tr><td>Cross-document view transitions</td><td>6.3</td><td>прогрессивное улучшение переходов</td></tr>
+<tr><td>Lightning CSS</td><td><span class="file">dist/main.css</span> 6.4</td><td>склейка со слоями, минификация, фолбэки</td></tr>
+</table>
+
+<h2 id="sec-12"><label class="done-label" title="Отметить раздел пройденным"><input type="checkbox" class="done" data-key="sec-12"></label>12. Глоссарий <a class="anchor" href="#sec-12">#</a></h2>
+
+<div class="glossary-item" id="g-1"><b>Каскад</b> — алгоритм выбора одного значения из конкурирующих объявлений: происхождение и важность, контекст, инлайн, слои, специфичность, порядок.</div>
+<div class="glossary-item" id="g-2"><b>Специфичность</b> — «вес» селектора: (id, классы/атрибуты/псевдоклассы, типы/псевдоэлементы).</div>
+<div class="glossary-item" id="g-3"><b>Каскадный слой</b> — <code>@layer</code>: группа стилей с приоритетом, проверяемым до специфичности.</div>
+<div class="glossary-item" id="g-4"><b>Наследование</b> — передача вычисленного значения свойства от родителя детям (для наследуемых свойств).</div>
+<div class="glossary-item" id="g-5"><b>Box model</b> — content, padding, border, margin; <code>box-sizing</code> определяет, что входит в width.</div>
+<div class="glossary-item" id="g-6"><b>Нормальный поток</b> — раскладка по умолчанию: блоки сверху вниз, строчные в строку.</div>
+<div class="glossary-item" id="g-7"><b>Схлопывание margin</b> — объединение вертикальных margin соседних блоков в потоке до большего из них.</div>
+<div class="glossary-item" id="g-8"><b>BFC</b> — контекст форматирования блока: изолированная область раскладки (<code>flow-root</code>, flex, grid, overflow).</div>
+<div class="glossary-item" id="g-9"><b>Логические свойства</b> — block/inline-направления вместо физических сторон; зависят от направления письма.</div>
+<div class="glossary-item" id="g-10"><b>Custom property</b> — CSS-переменная <code>--x</code>, наследуется и меняется в рантайме.</div>
+<div class="glossary-item" id="g-11"><b>Токен</b> — именованное дизайн-решение (отступ, цвет, размер), хранящееся в custom property.</div>
+<div class="glossary-item" id="g-12"><b><code>clamp()</code></b> — значение между минимумом и максимумом с «предпочитаемым» посередине.</div>
+<div class="glossary-item" id="g-13"><b>OKLCH</b> — цветовое пространство: светлота, хрома, оттенок; одинаковая L — одинаковая воспринимаемая яркость.</div>
+<div class="glossary-item" id="g-14"><b><code>color-scheme</code></b> — какую схему (светлую, тёмную) использует элемент; влияет на <code>light-dark()</code> и нативные контролы.</div>
+<div class="glossary-item" id="g-15"><b>Главная и поперечная оси</b> — направления во flex-контейнере: вдоль <code>flex-direction</code> и перпендикулярно.</div>
+<div class="glossary-item" id="g-16"><b><code>flex-basis</code></b> — базовый размер flex-элемента до распределения свободного места.</div>
+<div class="glossary-item" id="g-17"><b>Минимальный размер содержимого</b> — ширина самого длинного неразрывного фрагмента; по умолчанию нижний предел flex-элемента.</div>
+<div class="glossary-item" id="g-18"><b>Grid-линия, трек, область</b> — линии делят сетку на треки (строки, колонки); области — прямоугольники из ячеек.</div>
+<div class="glossary-item" id="g-19"><b>Неявная сетка</b> — треки, которые grid создаёт сам, когда элемент размещён за пределами явной.</div>
+<div class="glossary-item" id="g-20"><b><code>fr</code></b> — доля свободного места в grid-треках.</div>
+<div class="glossary-item" id="g-21"><b>Subgrid</b> — сетка, берущая треки у родительской сетки.</div>
+<div class="glossary-item" id="g-22"><b>Full-bleed</b> — элемент на всю ширину окна внутри ограниченной по ширине колонки контента.</div>
+<div class="glossary-item" id="g-23"><b>Intrinsic design</b> — раскладка, подстраивающаяся под контент и место без точек перелома.</div>
+<div class="glossary-item" id="g-24"><b>Container query</b> — условие на размер контейнера-предка, а не окна.</div>
+<div class="glossary-item" id="g-25"><b><code>:has()</code></b> — псевдокласс «содержит», позволяет стилизовать элемент по его потомкам и соседям.</div>
+<div class="glossary-item" id="g-26"><b><code>:user-invalid</code></b> — невалидное поле после взаимодействия пользователя.</div>
+<div class="glossary-item" id="g-27"><b>Контекст наложения</b> — группа элементов, внутри которой сравниваются z-index; создаётся position+z-index, transform, opacity, isolation и др.</div>
+<div class="glossary-item" id="g-28"><b>Sticky</b> — позиционирование, при котором элемент прилипает к краю ближайшего контейнера прокрутки.</div>
+<div class="glossary-item" id="g-29"><b>Composited-свойства</b> — <code>transform</code>, <code>opacity</code> и т. п.: анимируются без пересчёта раскладки.</div>
+<div class="glossary-item" id="g-30"><b><code>@property</code></b> — регистрация custom property с типом, начальным значением и наследованием.</div>
+<div class="glossary-item" id="g-31"><b>Baseline</b> — статус поддержки возможности во всех основных браузерах (newly / widely available).</div>
+<div class="glossary-item" id="g-32"><b>Прогрессивное улучшение</b> — возможность, без которой сайт работает, а с ней — лучше.</div>
+
+<h2 id="sec-13"><label class="done-label" title="Отметить раздел пройденным"><input type="checkbox" class="done" data-key="sec-13"></label>13. Вопросы на понимание (и для собеседования) <a class="anchor" href="#sec-13">#</a></h2>
+
+<p>Письменно, со ссылкой на шаг и файл.</p>
+<h3>Каскад и box model</h3>
+<ul>
+<li>Перечислите по порядку критерии каскада. Почему слои «сильнее» специфичности?</li>
+<li>Какая специфичность у <code>#main .list li h3</code>, <code>:is(#a, .b) p</code>, <code>:where(#a) p</code>?</li>
+<li>Почему <code>!important</code> в раннем слое побеждает <code>!important</code> в позднем?</li>
+<li>Что такое схлопывание margin, когда оно происходит и как его избежать?</li>
+<li>Чем <code>rem</code> лучше <code>px</code> для шрифтов и отступов?</li>
+</ul>
+<h3>Раскладка</h3>
+<ul>
+<li>Flex или grid: по какому признаку выбираете? Два примера из FrontFest для каждого.</li>
+<li>Почему многоточие во flex-элементе не работает без <code>min-width: 0</code>?</li>
+<li>Что означает <code>flex: 1</code> и чем отличается от <code>flex: auto</code>?</li>
+<li>Разница <code>auto-fill</code> и <code>auto-fit</code>. Зачем <code>min(100%, …)</code> внутри <code>minmax</code>?</li>
+<li>Как сделать full-bleed без обёрток? Что даёт subgrid?</li>
+</ul>
+<h3>Адаптив, цвет, селекторы</h3>
+<ul>
+<li>Медиазапрос или container query — критерии выбора. Почему контейнер не может стилизовать себя своим запросом?</li>
+<li>Как устроена тёмная тема через <code>light-dark()</code>? Почему жёсткие цвета её ломают?</li>
+<li>Почему oklch удобнее HSL для палитры?</li>
+<li>Три задачи, которые <code>:has()</code> решает без JS. Чем <code>:user-invalid</code> лучше <code>:invalid</code>?</li>
+</ul>
+<h3>Позиционирование и движение</h3>
+<ul>
+<li>Почему sticky перестаёт работать от <code>overflow: hidden</code> у предка и чем помогает <code>clip</code>?</li>
+<li>Что создаёт контекст наложения? Почему <code>z-index: 9999</code> иногда «не работает»?</li>
+<li>Какие свойства дёшево анимировать и почему?</li>
+<li>Зачем <code>@property</code>? Как анимировать появление из <code>display: none</code>?</li>
+<li>Как вы уважаете <code>prefers-reduced-motion</code>? Что такое прогрессивное улучшение на примере view transitions?</li>
+</ul>
+
+<h2 id="sec-14"><label class="done-label" title="Отметить раздел пройденным"><input type="checkbox" class="done" data-key="sec-14"></label>14. Что дальше <a class="anchor" href="#sec-14">#</a></h2>
+
+<table>
+<tr><th>Направление</th><th>Зачем</th><th>Что сделать</th><th>Ссылка</th></tr>
+<tr><td>Tailwind-лаба</td><td>те же идеи, записанные классами</td><td>сравнить: токены ↔ <code>@theme</code>, слои, <code>:has</code> ↔ <code>has-*</code>, container queries ↔ <code>@container</code></td><td>Tailwind-лаба (ваша)</td></tr>
+<tr><td>Anchor positioning</td><td>подсказки и меню, привязанные к элементу, без JS</td><td>подсказка «Что входит» у карточки тарифа через <code>anchor-name</code> и <code>position-anchor</code>; проверьте статус Baseline</td><td><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning" target="_blank">MDN</a></td></tr>
+<tr><td>Scroll-driven animations</td><td>анимация от прокрутки без JS</td><td>полоса прогресса чтения, появление секций через <code>animation-timeline: view()</code></td><td><a href="https://scroll-driven-animations.style" target="_blank">scroll-driven-animations.style</a></td></tr>
+<tr><td><code>@scope</code></td><td>стили компонента без БЭМ</td><td>ограничить стили карточки её границами с «донатом» (<code>to (...)</code>)</td><td><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@scope" target="_blank">MDN</a></td></tr>
+<tr><td>Style queries</td><td>варианты компонента по значению переменной</td><td><code>@container style(--variant: compact)</code></td><td>проверьте поддержку</td></tr>
+<tr><td>Stylelint</td><td>правила кода в команде</td><td>запрет <code>!important</code> вне utilities, запрет жёстких цветов вне tokens</td><td><a href="https://stylelint.io" target="_blank">stylelint.io</a></td></tr>
+<tr><td>Своё портфолио</td><td>применить всё сразу</td><td>сайт услуг: токены, темы, container queries — и сравнить с версией на Tailwind</td><td>—</td></tr>
+</table>
+
+</main>
+</div>
+<a class="totop" href="#top">↑ Наверх</a>
+<script>
+(function () {
+  var KEY = 'css-lab-progress', NAVKEY = 'css-lab-nav';
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+  var boxes = document.querySelectorAll('input.done');
+  function apply() {
+    var total = boxes.length, done = 0;
+    boxes.forEach(function (b) {
+      var k = b.dataset.key, on = !!state[k];
+      b.checked = on; if (on) done++;
+      var host = b.closest('.step') || b.closest('h2');
+      if (host) host.classList.toggle('is-done', on);
+      var nav = document.querySelector('.sidebar a[data-key="' + k + '"]');
+      if (nav) nav.classList.toggle('done', on);
+    });
+    document.getElementById('progress-fill').style.width = (total ? done / total * 100 : 0) + '%';
+    document.getElementById('progress-text').textContent = 'Пройдено: ' + done + ' / ' + total;
+  }
+  boxes.forEach(function (b) {
+    b.addEventListener('change', function () {
+      state[b.dataset.key] = b.checked;
+      localStorage.setItem(KEY, JSON.stringify(state));
+      apply();
+    });
+  });
+  document.getElementById('reset-progress').addEventListener('click', function () {
+    if (confirm('Сбросить все отметки?')) { state = {}; localStorage.removeItem(KEY); apply(); }
+  });
+  apply();
+
+  var toggle = document.getElementById('nav-toggle');
+  function setNav(collapsed) {
+    document.body.classList.toggle('nav-collapsed', collapsed);
+    localStorage.setItem(NAVKEY, collapsed ? '1' : '0');
+    toggle.textContent = collapsed ? '☰' : '✕';
+    toggle.title = collapsed ? 'Показать оглавление' : 'Скрыть оглавление';
+  }
+  toggle.addEventListener('click', function () { setNav(!document.body.classList.contains('nav-collapsed')); });
+  setNav(localStorage.getItem(NAVKEY) === '1' || window.innerWidth < 900);
+
+  // клик по чекбоксу в заголовке не должен вести по якорю
+  document.querySelectorAll('.done-label').forEach(function (l) { l.addEventListener('click', function (e) { e.stopPropagation(); }); });
+})();
+</script>
+</body>
+</html>

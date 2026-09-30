@@ -1727,7 +1727,7 @@ grep -o '@layer[^{;]*' dist/main.css | head -5</code></pre>
 <tr><td>Flex: оси, <code>gap</code>, <code>margin: auto</code></td><td>шапка 3.1</td><td>главная и поперечная ось; «оттолкнуть»</td></tr>
 <tr><td><code>flex</code> grow/shrink/basis, <code>min-width: auto</code></td><td>медиа-объект 3.2</td><td><code>min-inline-size: 0</code> — лекарство от распирания</td></tr>
 <tr><td><code>flex-wrap</code>, кнопка вниз через <code>margin-block-start: auto</code></td><td>тарифы 3.3</td><td>адаптивный ряд без медиазапросов</td></tr>
-<tr><td>Прижатый подвал, full-bleed</td><td><code>body</code>, <code>main</code> 4.1</td><td><code>auto 1fr auto</code>; именованные линии</td></tr>
+<tr><td>Прижатый подвал, full-bleed</td><td><code>body</code>, <code>main</code> 4.1</td><td>flex-колонка на <code>body</code> + <code>flex: 1</code> у <code>main</code>; именованные линии</td></tr>
 <tr><td><code>auto-fill</code> / <code>auto-fit</code>, <code>minmax(min(100%, …), 1fr)</code></td><td>спикеры 4.2</td><td>колонки «сколько влезет» без переполнения</td></tr>
 <tr><td>Размещение по именованным линиям, неявная сетка</td><td>таймлайн 4.3</td><td>CSS размещает, разметка хранит данные</td></tr>
 <tr><td><code>subgrid</code></td><td>hero 4.1, тарифы 4.4</td><td>дети выравниваются по сетке предка</td></tr>

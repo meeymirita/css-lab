@@ -1,6 +1,6 @@
 # CSS Lab — FrontFest
 
-![CSS](https://meeymirita-files.storage.yandexcloud.net/css/css.png)
+![CSS](https://raw.githubusercontent.com/meeymirita/works-lab/main/images/css.png)
 
 > **30.09.2026 — методичка вычитана и исправлена.** Что найдено и что поправлено — в [fixes/frontend/css.md](https://github.com/meeymirita/lab-fixes/blob/main/frontend/css.md) репозитория `lab-fixes`.
 
